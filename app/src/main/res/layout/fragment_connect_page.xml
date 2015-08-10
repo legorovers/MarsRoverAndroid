@@ -1,0 +1,144 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:paddingLeft="@dimen/activity_horizontal_margin"
+                android:paddingRight="@dimen/activity_horizontal_margin"
+                android:paddingTop="@dimen/activity_vertical_margin"
+                android:paddingBottom="@dimen/activity_vertical_margin"
+                tools:context="com.liverpool.university.marsrover.ConnectPageFragment"
+                android:id="@+id/connectPage"
+              android:gravity="center">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Robot Bluetooth Address"
+        android:id="@+id/textView2"
+        android:layout_weight="0.00"
+        android:padding="10dp"
+        />
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:weightSum="1"
+        android:gravity="center">
+
+        <EditText
+            android:layout_width="70dp"
+            android:layout_height="fill_parent"
+            android:inputType="number"
+            android:ems="10"
+            android:id="@+id/txtBT1"
+            android:text="101"
+            android:textSize="25dp"
+            android:singleLine="true"
+            android:clickable="true"
+            android:maxLength="3"
+            android:textAlignment="center"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:nextFocusForward="@+id/txtBT2"
+            android:nextFocusDown="@+id/txtBT2"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="."
+            android:id="@+id/textView4"
+            android:layout_weight="0.00"
+            android:textSize="25dp"/>
+
+        <EditText
+            android:layout_width="70dp"
+            android:layout_height="wrap_content"
+            android:inputType="number"
+            android:ems="10"
+            android:id="@+id/txtBT2"
+            android:layout_weight="0.05"
+            android:text="0"
+            android:textSize="25dp"
+            android:gravity="center"
+            android:maxLength="3"
+            android:nextFocusForward="@+id/txtBT3"
+            android:nextFocusDown="@+id/txtBT3"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="."
+            android:id="@+id/textView3"
+            android:layout_weight="0.00"
+            android:textSize="25dp"/>
+
+        <EditText
+            android:layout_width="70dp"
+            android:layout_height="fill_parent"
+            android:inputType="number"
+            android:ems="10"
+            android:id="@+id/txtBT3"
+            android:layout_weight="0.05"
+            android:text="1"
+            android:textSize="25dp"
+            android:textAlignment="center"
+            android:gravity="center"
+            android:maxLength="3"
+            android:nextFocusForward="@+id/txtBT4"
+            android:nextFocusDown="@+id/txtBT4"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="."
+            android:id="@+id/textView"
+            android:layout_weight="0.00"
+            android:textSize="25dp"/>
+
+        <EditText
+            android:layout_width="70dp"
+            android:layout_height="wrap_content"
+            android:inputType="number"
+            android:ems="10"
+            android:id="@+id/txtBT4"
+            android:layout_weight="0.05"
+            android:text="1"
+            android:textSize="25dp"
+            android:gravity="center"
+            android:maxLength="3"/>
+    </LinearLayout>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Disconnect"
+        android:id="@+id/cmdConnect"
+        android:layout_gravity="center_horizontal"
+        />
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="5dp"
+        android:layout_weight="0.00"
+        android:background="#ffafafaf"
+        android:layout_marginBottom="5dp"
+        android:layout_marginTop="5dp"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:text="Please ensure that the robot is in the list of paired devices"
+        android:id="@+id/txtMessages"
+        android:layout_gravity="center_horizontal"
+        android:textSize="25sp"
+        android:padding="5dp"
+        android:background="#ffdcdcdc"/>
+
+</LinearLayout>

@@ -1,0 +1,126 @@
+package com.liverpool.university.marsrover;
+
+
+import android.app.Activity;
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.os.Bundle;
+import android.support.v4.app.Fragment;
+
+import EV3.BluetoothRobot;
+
+public class RobotStoreFragment extends Fragment
+{
+	public static final String TAG_NAME = "TAG_ROBOT_FRAG";
+	private BluetoothRobot btRobot;
+	private Thread robotThread;
+
+	public RobotStoreFragment()
+	{
+		setRetainInstance(true);
+		btRobot = new BluetoothRobot();
+	}
+
+	public void setSettings(float obstacle, int blackMax, int waterMax)
+	{
+		btRobot.changeSettings(obstacle, blackMax, waterMax);
+	}
+
+	public void setRule(int pos, BluetoothRobot.RobotRule rule)
+	{
+		btRobot.changedRule(pos, rule);
+	}
+
+	public BluetoothRobot.RobotRule getRule(int pos)
+	{
+		return btRobot.getAllRules()[pos];
+	}
+
+	@Override
+	public void onCreate(Bundle savedInstanceState)
+	{
+		super.onCreate(savedInstanceState);
+	}
+
+	@Override
+	public void onAttach(Activity activity)
+	{
+		super.onAttach(activity);
+	}
+
+	@Override
+	public void onDetach()
+	{
+		super.onDetach();
+	}
+
+	public BluetoothRobot.BeliefSet getBeliefSet()
+	{
+		return btRobot.getBeliefSet();
+	}
+
+	public Exception getConnectionException()
+	{
+		return btRobot.getGeneratedException();
+	}
+
+	public String getConnectionMessages()
+	{
+		return btRobot.getMessages();
+	}
+
+	public void setConnection(boolean connection, SharedPreferences prefs)
+	{
+
+		if (connection)
+		{
+			btRobot.setBTAddress(String.format("%d.%d.%d.%d", prefs.getInt("BT1", 10), prefs.getInt("BT2", 0), prefs.getInt("BT3", 1), prefs.getInt("BT4", 1)));
+			robotThread = new Thread(btRobot);
+			robotThread.start();
+		}
+		else
+		{
+			btRobot.disconnect();
+		}
+	}
+
+	public BluetoothRobot.ConnectStatus getConnectionStatus()
+	{
+		return btRobot.connectionStatus();
+	}
+
+	public void sendAction(BluetoothRobot.RobotAction action)
+	{
+		btRobot.addAction(action);
+	}
+
+	public void setMode(BluetoothRobot.RobotMode mode)
+	{
+		btRobot.setMode(mode);
+	}
+
+	public void setRunning(boolean running)
+	{
+		btRobot.setRunning(running);
+	}
+
+	public void updateNavSettings(long delayMills, int speed)
+	{
+		btRobot.updateManual(delayMills, speed);
+	}
+
+	public boolean getRunning()
+	{
+		return btRobot.getRunning();
+	}
+
+	public long getTimeUntil()
+	{
+		return btRobot.getTimeToAction();
+	}
+
+	public int getFoundColour()
+	{
+		return btRobot.getColourFound();
+	}
+}

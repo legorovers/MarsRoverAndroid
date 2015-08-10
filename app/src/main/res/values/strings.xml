@@ -1,0 +1,61 @@
+<resources>
+    <string name="app_name">Mars Rover</string>
+
+    <string name="drawer_open">Open navigation drawer</string>
+    <string name="drawer_close">Close navigation drawer</string>
+
+    <string name="title_activity_connect_page">Mars Rover</string>
+
+    <string-array name="delay_items">
+        <item>Instant</item>
+        <item>Satellite phone call to Australia (500ms)</item>
+        <item>Radio signal to the Moon (1.3secs)</item>
+        <item>Signal to Mars (3min)</item>
+    </string-array>
+
+    <string-array name="speed_items">
+        <item>Slow</item>
+        <item>Normal</item>
+        <item>Fast</item>
+        <item>Faster</item>
+        <item>Fastest</item>
+    </string-array>
+
+    <string name="colour_value">Colour Value - %d</string>
+    <string name="distance_value">Distance Value - %d</string>
+
+    <string name="rule">If an obstacle has </string>
+    <string name="rule_cont">then do </string>
+    <string name="rule_then">then</string>
+
+    <string-array name="rule_options">
+        <item>Nothing</item>
+        <item>Forward</item>
+        <item>Forward a bit</item>
+        <item>Backwards</item>
+        <item>Backwards a bit</item>
+        <item>Left</item>
+        <item>Left a bit</item>
+        <item>Right</item>
+        <item>Right a bit</item>
+        <item>Stop</item>
+    </string-array>
+
+    <string-array name="rule_type_options">
+        <item>Appeared</item>
+        <item>Disappeared</item>
+    </string-array>
+
+    <string-array name="rule_list">
+        <item>Rule 1</item>
+        <item>Rule 2</item>
+        <item>Rule 3</item>
+    </string-array>
+
+    <string-array name="task_list">
+        <item>Avoid Obstacle</item>
+        <item>Follow Line</item>
+        <item>Find Water</item>
+    </string-array>
+
+</resources>
