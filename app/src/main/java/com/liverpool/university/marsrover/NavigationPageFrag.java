@@ -11,6 +11,8 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.LinearLayout;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
@@ -98,12 +100,40 @@ public class NavigationPageFrag extends BaseBluetoothFragment implements Adapter
 		view.findViewById(R.id.cmdForward).setOnClickListener(new ActionClicked(BluetoothRobot.RobotAction.FORWARD));
 		view.findViewById(R.id.cmdFor_A_Bit).setOnClickListener(new ActionClicked(BluetoothRobot.RobotAction.FORWARD_A_BIT));
 		view.findViewById(R.id.cmdStop).setOnClickListener(new ActionClicked(BluetoothRobot.RobotAction.STOP));
-		view.findViewById(R.id.cmdBack_A_Bit).setOnClickListener(new ActionClicked(BluetoothRobot.RobotAction.BACK_A_BIT));
-		view.findViewById(R.id.cmdBack).setOnClickListener(new ActionClicked(BluetoothRobot.RobotAction.BACKWORD));
+		view.findViewById(R.id.cmdBack_A_Bit).setOnClickListener(new ActionClicked(BluetoothRobot.RobotAction.BACKWARD_A_BIT));
+		view.findViewById(R.id.cmdBack).setOnClickListener(new ActionClicked(BluetoothRobot.RobotAction.BACKWARD));
 		view.findViewById(R.id.cmdLeft).setOnClickListener(new ActionClicked(BluetoothRobot.RobotAction.LEFT));
 		view.findViewById(R.id.cmdLeft_A_Bit).setOnClickListener(new ActionClicked(BluetoothRobot.RobotAction.LEFT_A_BIT));
 		view.findViewById(R.id.cmdRight_A_Bit).setOnClickListener(new ActionClicked(BluetoothRobot.RobotAction.RIGHT_A_BIT));
 		view.findViewById(R.id.cmdRight).setOnClickListener(new ActionClicked(BluetoothRobot.RobotAction.RIGHT));
+
+		view.findViewById(R.id.cmdTForward).setOnClickListener(new ActionClicked(BluetoothRobot.RobotAction.FORWARD));
+		view.findViewById(R.id.cmdTFABit).setOnClickListener(new ActionClicked(BluetoothRobot.RobotAction.FORWARD_A_BIT));
+		view.findViewById(R.id.cmdTStop).setOnClickListener(new ActionClicked(BluetoothRobot.RobotAction.STOP));
+		view.findViewById(R.id.cmdTBABit).setOnClickListener(new ActionClicked(BluetoothRobot.RobotAction.BACKWARD_A_BIT));
+		view.findViewById(R.id.cmdTBack).setOnClickListener(new ActionClicked(BluetoothRobot.RobotAction.BACKWARD));
+		view.findViewById(R.id.cmdTLeft).setOnClickListener(new ActionClicked(BluetoothRobot.RobotAction.LEFT));
+		view.findViewById(R.id.cmdTLABit).setOnClickListener(new ActionClicked(BluetoothRobot.RobotAction.LEFT_A_BIT));
+		view.findViewById(R.id.cmdTRABit).setOnClickListener(new ActionClicked(BluetoothRobot.RobotAction.RIGHT_A_BIT));
+		view.findViewById(R.id.cmdTRight).setOnClickListener(new ActionClicked(BluetoothRobot.RobotAction.RIGHT));
+
+		((CheckBox)view.findViewById(R.id.chkImages)).setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener()
+		{
+			@Override
+			public void onCheckedChanged(CompoundButton compoundButton, boolean b)
+			{
+				if (b)
+				{
+					getView().findViewById(R.id.tblIconButtons).setVisibility(View.VISIBLE);
+					getView().findViewById(R.id.tblStrButtons).setVisibility(View.GONE);
+				}
+				else
+				{
+					getView().findViewById(R.id.tblIconButtons).setVisibility(View.GONE);
+					getView().findViewById(R.id.tblStrButtons).setVisibility(View.VISIBLE);
+				}
+			}
+		});
 
 		((Spinner)view.findViewById(R.id.cboDelay)).setOnItemSelectedListener(this);
 		((Spinner)view.findViewById(R.id.cboSpeed)).setOnItemSelectedListener(this);

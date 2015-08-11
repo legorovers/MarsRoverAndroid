@@ -42,7 +42,8 @@ public class RulesPageFragment extends BaseBluetoothFragment
 	{
 		BluetoothRobot.RobotRule rule = new BluetoothRobot.RobotRule(
 				((CheckBox)getView().findViewById(R.id.chkRule)).isChecked(),
-				((Spinner)getView().findViewById(R.id.cboObstacle)).getSelectedItemPosition(),
+				BluetoothRobot.BeliefStates.fromInt(((Spinner) getView().findViewById(R.id.cboType)).getSelectedItemPosition()),
+				((Spinner) getView().findViewById(R.id.cboObstacle)).getSelectedItemPosition(),
 				BluetoothRobot.RobotAction.fromInt(((Spinner) getView().findViewById(R.id.cboAction1)).getSelectedItemPosition()),
 				BluetoothRobot.RobotAction.fromInt(((Spinner) getView().findViewById(R.id.cboAction2)).getSelectedItemPosition()),
 				BluetoothRobot.RobotAction.fromInt(((Spinner) getView().findViewById(R.id.cboAction3)).getSelectedItemPosition()));
@@ -69,6 +70,9 @@ public class RulesPageFragment extends BaseBluetoothFragment
 		ArrayAdapter<String> adapter = new ArrayAdapter<String>(view.getContext(), R.layout.combo_list_item, R.id.txtView, getResources().getStringArray(R.array.rule_list));
 		((Spinner)view.findViewById(R.id.cboRule)).setAdapter(adapter);
 
+		ArrayAdapter<String> tadapter = new ArrayAdapter<String>(view.getContext(), R.layout.combo_list_item, R.id.txtView, getResources().getStringArray(R.array.rule_type));
+		((Spinner)view.findViewById(R.id.cboType)).setAdapter(tadapter);
+
 		ArrayAdapter<String> Aadapter = new ArrayAdapter<String>(view.getContext(), R.layout.combo_list_item, R.id.txtView, getResources().getStringArray(R.array.rule_type_options));
 		((Spinner)view.findViewById(R.id.cboObstacle)).setAdapter(Aadapter);
 
@@ -87,11 +91,12 @@ public class RulesPageFragment extends BaseBluetoothFragment
 			{
 				BluetoothRobot.RobotRule rule = btEvents.getRule(position);
 
-				((CheckBox)getView().findViewById(R.id.chkRule)).setChecked(rule.getEnabled());
-				((Spinner)getView().findViewById(R.id.cboObstacle)).setSelection(rule.getOnAppeared());
-				((Spinner)getView().findViewById(R.id.cboAction1)).setSelection(rule.getAction(0).toInt());
-				((Spinner)getView().findViewById(R.id.cboAction2)).setSelection(rule.getAction(1).toInt());
-				((Spinner)getView().findViewById(R.id.cboAction3)).setSelection(rule.getAction(2).toInt());
+				((CheckBox) getView().findViewById(R.id.chkRule)).setChecked(rule.getEnabled());
+				((Spinner) getView().findViewById(R.id.cboType)).setSelection(rule.getType().toInt());
+				((Spinner) getView().findViewById(R.id.cboObstacle)).setSelection(rule.getOnAppeared());
+				((Spinner) getView().findViewById(R.id.cboAction1)).setSelection(rule.getAction(0).toInt());
+				((Spinner) getView().findViewById(R.id.cboAction2)).setSelection(rule.getAction(1).toInt());
+				((Spinner) getView().findViewById(R.id.cboAction3)).setSelection(rule.getAction(2).toInt());
 			}
 
 			@Override
@@ -116,6 +121,7 @@ public class RulesPageFragment extends BaseBluetoothFragment
 			}
 		});
 
+		((Spinner)view.findViewById(R.id.cboType)).setOnItemSelectedListener(new itemSelected());
 		((Spinner)view.findViewById(R.id.cboObstacle)).setOnItemSelectedListener(new itemSelected());
 		((Spinner)view.findViewById(R.id.cboAction1)).setOnItemSelectedListener(new itemSelected());
 		((Spinner)view.findViewById(R.id.cboAction2)).setOnItemSelectedListener(new itemSelected());

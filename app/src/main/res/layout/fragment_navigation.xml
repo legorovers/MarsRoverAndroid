@@ -68,162 +68,225 @@
         android:text="Large Text"
         android:id="@+id/txtTimeTil"/>
 
+    <CheckBox
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Use Images"
+        android:id="@+id/chkImages"
+        android:scaleX="2.0"
+        android:scaleY="2.0"
+        android:textSize="11sp"/>
+
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center"
-        android:id="@+id/liyNav">
+        android:id="@+id/liyNav"
+        >
 
-        <TableLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/tblButtons"
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/tblStrButtons"
             android:gravity="center"
-            >
+            android:visibility="visible">
 
-            <TableRow
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_gravity="center_horizontal"
-                >
+            <Button
+                android:layout_width="105dp"
+                android:layout_height="100dp"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true"
+                android:text="Forward"
+                android:id="@+id/cmdTForward"
+                android:layout_marginBottom="5dp"
+                android:textSize="17sp"/>
 
-                <ImageButton
-                    android:layout_width="100dp"
-                    android:layout_height="100dp"
-                    android:id="@+id/cmdForward"
-                    android:layout_column="2"
-                    android:onClick="cmdActionClicked"
-                    android:layout_margin="5dp"
-                    android:background="@drawable/btn_bg"
-                    android:src="@drawable/updouble"
-                    android:scaleType="center"
-                    />
+            <Button
+                android:layout_width="105dp"
+                android:layout_height="100dp"
+                android:text="Forward a bit"
+                android:id="@+id/cmdTFABit"
+                android:layout_below="@+id/cmdTForward"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="5dp"
+                android:textSize="17sp"/>
 
+            <Button
+                android:layout_width="105dp"
+                android:layout_height="100dp"
+                android:text="Stop"
+                android:id="@+id/cmdTStop"
+                android:layout_below="@+id/cmdTFABit"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="5dp"
+                android:textSize="17sp"/>
 
-            </TableRow>
+            <Button
+                android:layout_width="105dp"
+                android:layout_height="100dp"
+                android:text="Reverse a bit"
+                android:id="@+id/cmdTBABit"
+                android:layout_below="@+id/cmdTStop"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="5dp"
+                android:textSize="17sp"/>
 
-            <TableRow
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                >
+            <Button
+                android:layout_width="105dp"
+                android:layout_height="100dp"
+                android:text="Reverse"
+                android:id="@+id/cmdTBack"
+                android:layout_below="@+id/cmdTBABit"
+                android:layout_centerHorizontal="true"
+                android:textSize="17sp"/>
 
-                <ImageButton
-                    android:layout_width="100dp"
-                    android:layout_height="100dp"
-                    android:id="@+id/cmdFor_A_Bit"
-                    android:layout_column="2"
-                    android:onClick="cmdActionClicked"
-                    android:layout_margin="5dp"
-                    android:background="@drawable/btn_bg"
-                    android:src="@drawable/uparrow"
-                    android:scaleType="center"/>
-            </TableRow>
+            <Button
+                android:layout_width="105dp"
+                android:layout_height="100dp"
+                android:text="Left"
+                android:id="@+id/cmdTLeft"
+                android:layout_toStartOf="@+id/cmdTLABit"
+                android:layout_alignTop="@+id/cmdTStop"
+                android:layout_marginEnd="5dp"
+                android:textSize="17sp"/>
 
-            <TableRow
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                >
+            <Button
+                android:layout_width="105dp"
+                android:layout_height="100dp"
+                android:text="Left 90°"
+                android:id="@+id/cmdTLABit"
+                android:layout_alignTop="@id/cmdTStop"
+                android:layout_toStartOf="@+id/cmdTStop"
+                android:layout_marginEnd="5dp"
+                android:textSize="17sp"/>
 
-                <ImageButton
-                    android:layout_width="100dp"
-                    android:layout_height="100dp"
-                    android:id="@+id/cmdLeft"
-                    android:layout_column="0"
-                    android:onClick="cmdActionClicked"
-                    android:layout_marginRight="5dp"
-                    android:layout_marginLeft="5dp"
-                    android:background="@drawable/btn_bg"
-                    android:src="@drawable/leftdouble"
-                    android:scaleType="center"/>
+            <Button
+                android:layout_width="105dp"
+                android:layout_height="100dp"
+                android:text="Right"
+                android:id="@+id/cmdTRight"
+                android:layout_toEndOf="@+id/cmdTRABit"
+                android:layout_alignTop="@+id/cmdTStop"
+                android:layout_marginStart="5dp"
+                android:textSize="17sp"/>
 
-                <ImageButton
-                    android:layout_width="100dp"
-                    android:layout_height="100dp"
-                    android:id="@+id/cmdLeft_A_Bit"
-                    android:layout_column="1"
-                    android:onClick="cmdActionClicked"
-                    android:layout_marginLeft="5dp"
-                    android:layout_marginRight="5dp"
-                    android:background="@drawable/btn_bg"
-                    android:src="@drawable/leftarrow"
-                    android:scaleType="center"/>
+            <Button
+                android:layout_width="105dp"
+                android:layout_height="100dp"
+                android:text="Right 90°"
+                android:id="@+id/cmdTRABit"
+                android:layout_alignTop="@id/cmdTStop"
+                android:layout_toEndOf="@+id/cmdTStop"
+                android:layout_marginStart="5dp"
+                android:textSize="17sp"/>
+        </RelativeLayout>
 
-                <Button
-                    android:layout_width="100dp"
-                    android:layout_height="100dp"
-                    android:text="Stop"
-                    android:id="@+id/cmdStop"
-                    android:layout_row="2"
-                    android:layout_column="2"
-                    android:onClick="cmdActionClicked"
-                    android:layout_marginLeft="5dp"
-                    android:layout_marginRight="5dp"/>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/tblIconButtons"
+            android:gravity="center"
+            android:visibility="gone">
+            
 
-                <ImageButton
-                    android:layout_width="100dp"
-                    android:layout_height="100dp"
-                    android:text=">"
-                    android:id="@+id/cmdRight_A_Bit"
-                    android:layout_column="3"
-                    android:onClick="cmdActionClicked"
-                    android:layout_marginRight="5dp"
-                    android:layout_marginLeft="5dp"
-                    android:background="@drawable/btn_bg"
-                    android:src="@drawable/rightarrow"
-                    android:scaleType="center"/>
+            <ImageButton
+                android:layout_width="105dp"
+                android:layout_height="100dp"
+                android:id="@+id/cmdForward"
+                android:background="@drawable/btn_bg"
+                android:src="@drawable/updouble"
+                android:scaleType="center"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="5dp"/>
+            
+            <ImageButton
+                android:layout_width="105dp"
+                android:layout_height="100dp"
+                android:id="@+id/cmdFor_A_Bit"
+                android:background="@drawable/btn_bg"
+                android:src="@drawable/uparrow"
+                android:scaleType="center"
+                android:layout_below="@+id/cmdForward"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="5dp"/>
+        
+            <ImageButton
+                android:layout_width="105dp"
+                android:layout_height="100dp"
+                android:id="@+id/cmdLeft"
+                android:background="@drawable/btn_bg"
+                android:src="@drawable/leftdouble"
+                android:scaleType="center"
+                android:layout_alignTop="@+id/cmdStop"
+                android:layout_toStartOf="@+id/cmdLeft_A_Bit"
+                android:layout_marginRight="5dp"/>
 
-                <ImageButton
-                    android:layout_width="100dp"
-                    android:layout_height="100dp"
-                    android:text=">>"
-                    android:id="@+id/cmdRight"
-                    android:layout_column="4"
-                    android:onClick="cmdActionClicked"
-                    android:layout_marginLeft="5dp"
-                    android:layout_marginRight="5dp"
-                    android:background="@drawable/btn_bg"
-                    android:src="@drawable/rightdouble"
-                    android:scaleType="center"/>
+            <ImageButton
+                android:layout_width="105dp"
+                android:layout_height="100dp"
+                android:id="@+id/cmdLeft_A_Bit"
+                android:background="@drawable/btn_bg"
+                android:src="@drawable/leftarrow"
+                android:scaleType="center"
+                android:layout_alignTop="@+id/cmdStop"
+                android:layout_toStartOf="@+id/cmdStop"
+                android:layout_marginRight="5dp"/>
 
-            </TableRow>
+            <Button
+                android:layout_width="105dp"
+                android:layout_height="100dp"
+                android:layout_below="@+id/cmdFor_A_Bit"
+                android:layout_centerHorizontal="true"
+                android:text="Stop"
+                android:id="@+id/cmdStop"
+                android:layout_marginBottom="5dp"/>
 
-            <TableRow
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                >
+            <ImageButton
+                android:layout_width="105dp"
+                android:layout_height="100dp"
+                android:id="@+id/cmdRight_A_Bit"
+                android:background="@drawable/btn_bg"
+                android:src="@drawable/rightarrow"
+                android:scaleType="center"
+                android:layout_alignTop="@+id/cmdStop"
+                android:layout_toEndOf="@+id/cmdStop"
+                android:layout_marginLeft="5dp"/>
 
-                <ImageButton
-                    android:layout_width="100dp"
-                    android:layout_height="100dp"
-                    android:id="@+id/cmdBack_A_Bit"
-                    android:layout_column="2"
-                    android:onClick="cmdActionClicked"
-                    android:layout_margin="5dp"
-                    android:background="@drawable/btn_bg"
-                    android:src="@drawable/downarrow"
-                    android:scaleType="center"/>
-            </TableRow>
+            <ImageButton
+                android:layout_width="105dp"
+                android:layout_height="100dp"
+                android:id="@+id/cmdRight"
+                android:background="@drawable/btn_bg"
+                android:src="@drawable/rightdouble"
+                android:scaleType="center"
+                android:layout_alignTop="@id/cmdStop"
+                android:layout_toEndOf="@+id/cmdRight_A_Bit"
+                android:layout_marginLeft="5dp"/>
 
-            <TableRow
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                >
-
-                <ImageButton
-                    android:layout_width="100dp"
-                    android:layout_height="100dp"
-                    android:id="@+id/cmdBack"
-                    android:layout_column="2"
-                    android:onClick="cmdActionClicked"
-                    android:layout_margin="5dp"
-                    android:background="@drawable/btn_bg"
-                    android:src="@drawable/downdouble"
-                    android:scaleType="center"/>
-
-
-            </TableRow>
-        </TableLayout>
+            <ImageButton
+                android:layout_width="105dp"
+                android:layout_height="100dp"
+                android:id="@+id/cmdBack_A_Bit"
+                android:background="@drawable/btn_bg"
+                android:src="@drawable/downarrow"
+                android:scaleType="center"
+                android:layout_below="@+id/cmdStop"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="5dp"/>
+        
+            <ImageButton
+                android:layout_width="105dp"
+                android:layout_height="100dp"
+                android:id="@+id/cmdBack"
+                android:background="@drawable/btn_bg"
+                android:src="@drawable/downdouble"
+                android:scaleType="center"
+                android:layout_below="@+id/cmdBack_A_Bit"
+                android:layout_centerHorizontal="true"
+                />
+        </RelativeLayout>
     </LinearLayout>
 
 </LinearLayout>

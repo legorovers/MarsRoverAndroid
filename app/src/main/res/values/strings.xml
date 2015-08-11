@@ -24,9 +24,16 @@
     <string name="colour_value">Colour Value - %d</string>
     <string name="distance_value">Distance Value - %d</string>
 
-    <string name="rule">If an obstacle has </string>
+    <string name="rule">If </string>
+    <string name="rule_has">has </string>
     <string name="rule_cont">then do </string>
     <string name="rule_then">then</string>
+
+    <string-array name="rule_type">
+        <item>An obstacle</item>
+        <item>Water</item>
+        <item>A path</item>
+    </string-array>
 
     <string-array name="rule_options">
         <item>Nothing</item>
@@ -35,9 +42,9 @@
         <item>Backwards</item>
         <item>Backwards a bit</item>
         <item>Left</item>
-        <item>Left a bit</item>
+        <item>Left 90°</item>
         <item>Right</item>
-        <item>Right a bit</item>
+        <item>Right 90°</item>
         <item>Stop</item>
     </string-array>
 
@@ -50,6 +57,7 @@
         <item>Rule 1</item>
         <item>Rule 2</item>
         <item>Rule 3</item>
+        <item>Rule 4</item>
     </string-array>
 
     <string-array name="task_list">
