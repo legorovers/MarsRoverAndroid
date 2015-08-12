@@ -31,8 +31,8 @@ public class TaskPageFragment extends BaseBluetoothFragment implements AdapterVi
 
 				((TextView) getView().findViewById(R.id.txtDistance)).setText(String.format("Distance - %f", currentBeliefs.distance));
 				((TextView) getView().findViewById(R.id.txtColour)).setText(String.format("RGB - %d %d %d", Color.red(currentBeliefs.colour)
-																										  , Color.green(currentBeliefs.colour)
-																										  , Color.blue(currentBeliefs.colour)));
+						, Color.green(currentBeliefs.colour)
+						, Color.blue(currentBeliefs.colour)));
 
 				beliefSet.setLength(0);
 				beliefSet.append("Beliefs - [");
@@ -124,5 +124,17 @@ public class TaskPageFragment extends BaseBluetoothFragment implements AdapterVi
 	{
 		btEvents.setRunning(!btEvents.getRunning());
 		updateCMD(getView());
+	}
+
+	public void doUpdates(boolean update)
+	{
+		if (!update)
+		{
+			beliefHandle.removeCallbacks(getBeliefSet);
+		}
+		else
+		{
+			beliefHandle.post(getBeliefSet);
+		}
 	}
 }

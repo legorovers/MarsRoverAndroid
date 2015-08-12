@@ -90,18 +90,21 @@ public class MainPage extends AppCompatActivity implements BaseBluetoothFragment
 		drawerToggle = new ActionBarDrawerToggle(this,drawerLayout,
 				R.string.drawer_open, R.string.drawer_close)
 		{
-
 			/** Called when a drawer has settled in a completely open state. */
 			public void onDrawerOpened(View drawerView)
 			{
 				super.onDrawerOpened(drawerView);
-				invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
+				invalidateOptionsMenu();
+				taskPage.doUpdates(false);
+				navigationPage.doUpdates(false);// creates call to onPrepareOptionsMenu()
 			}
 
 			/** Called when a drawer has settled in a completely closed state. */
 			public void onDrawerClosed(View view)
 			{
 				super.onDrawerClosed(view);
+				taskPage.doUpdates(true);
+				navigationPage.doUpdates(true);
 				invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
 			}
 		};

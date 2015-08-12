@@ -93,11 +93,21 @@ public class BluetoothRobot implements Runnable
 		}
 	}
 
-	public static class BeliefSet
+	public static class BeliefSet implements Cloneable
 	{
 		public float distance;
 		public int colour;
 		public ArrayList<BeliefStates> states = new ArrayList<BeliefStates>();
+
+		@Override
+		public BeliefSet clone()
+		{
+			BeliefSet b = new BeliefSet();
+			b.distance = distance;
+			b.colour = colour;
+			b.states = (ArrayList<BeliefStates>)states.clone();
+			return b;
+		}
 	}
 
 	public static class RobotRule
@@ -155,11 +165,11 @@ public class BluetoothRobot implements Runnable
 	private boolean running;
 	
 	private BeliefSet state;
+	private BeliefSet stateCopy;
 	private boolean obstacleChanged;
 	private boolean pathChanged;
 	private boolean waterChanged;
 	private boolean pathFound;
-	private boolean beliefsUpdated;
 
 	private float objectDetected = 0.4f;
 	private int blackMax = 50;
@@ -401,14 +411,13 @@ public class BluetoothRobot implements Runnable
 			int curSpeed = speed;
 			while (status == ConnectStatus.CONNECTED)
 			{
-				beliefsUpdated = false;
 				disInput = robot.getuSensor().getSample();
 				float[] rgb = robot.getRGBSensor().getRGBSample();
 				//Log.w("Colour Values", "R - " + (int) (rgb[0] * 850) + " G - " + (int) (rgb[1] * 1026) + " B - " + (int) (rgb[2] * 1815));
 				state.colour = Color.rgb((int)(rgb[0] * 850), (int)(rgb[1] * 1026), (int)(rgb[2] * 1815));
 				state.distance = disInput;
 				updateBeliefs(disInput, state.colour);
-				beliefsUpdated = true;
+				stateCopy = state.clone();
 				if (curSpeed != speed)
 				{
 					robot.setTravelSpeed(speed);
@@ -536,11 +545,7 @@ public class BluetoothRobot implements Runnable
 
 	public BeliefSet getBeliefSet()
 	{
-		while (!beliefsUpdated && status == ConnectStatus.CONNECTED)
-		{
-			//Wait til beliefs are valid for the current run
-		}
-		return state;
+		return stateCopy;
 	}
 
 	public void setMode(RobotMode _mode)

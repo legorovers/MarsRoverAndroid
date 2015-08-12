@@ -1,6 +1,7 @@
 package com.liverpool.university.marsrover;
 
 import android.app.Activity;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
@@ -27,27 +28,43 @@ import EV3.BluetoothRobot;
 
 public class NavigationPageFrag extends BaseBluetoothFragment implements AdapterView.OnItemSelectedListener
 {
-
-	private Runnable updateTimeTil = new Runnable()
+	private Runnable getBeliefSet = new Runnable()
 	{
 		long time;
-
 		@Override
 		public void run()
 		{
-			try
+			if (getView() != null)
 			{
+				BluetoothRobot.BeliefSet currentBeliefs = btEvents.getBelief();
+
+				((TextView) getView().findViewById(R.id.txtNDistance)).setText(String.format("Distance - %f", currentBeliefs.distance));
+				((TextView) getView().findViewById(R.id.txtNColour)).setText(String.format("RGB - %d %d %d", Color.red(currentBeliefs.colour)
+						, Color.green(currentBeliefs.colour)
+						, Color.blue(currentBeliefs.colour)));
+
+				beliefSet.setLength(0);
+				beliefSet.append("Beliefs - [");
+				for (int i = 0; i < currentBeliefs.states.size(); i++)
+				{
+					if (i > 0)
+					{
+						beliefSet.append(", ");
+					}
+					beliefSet.append(currentBeliefs.states.get(i).toString());
+				}
+				beliefSet.append("]");
+				((TextView) getView().findViewById(R.id.txtNBeliefs)).setText(beliefSet.toString());
 				time = btEvents.getTimeTil();
 				String formatStr = new SimpleDateFormat("mm:ss", Locale.ENGLISH).format(time);
-						((TextView) getView().findViewById(R.id.txtTimeTil)).setText("Time until next action - " + formatStr);
-				timeTilHandler.post(updateTimeTil);
+				((TextView) getView().findViewById(R.id.txtTimeTil)).setText("Time until next action - " + formatStr);
 			}
-			catch (Exception e)
-			{
-
-			}
+			beliefHandle.postDelayed(getBeliefSet, 100);
 		}
 	};
+
+	private StringBuilder beliefSet = new StringBuilder();
+	private Handler beliefHandle = new Handler();
 
 	private class ActionClicked implements View.OnClickListener
 	{
@@ -64,8 +81,6 @@ public class NavigationPageFrag extends BaseBluetoothFragment implements Adapter
 			btEvents.sendAction(action);
 		}
 	};
-	
-	private Handler timeTilHandler;
 
 	private int getVisibility(boolean vis)
 	{
@@ -89,7 +104,6 @@ public class NavigationPageFrag extends BaseBluetoothFragment implements Adapter
 							 Bundle savedInstanceState)
 	{
 		// Inflate the layout for this fragment
-		timeTilHandler = new Handler();
 		View view = inflater.inflate(R.layout.fragment_navigation, container, false);
 		ArrayAdapter<String> adapter = new ArrayAdapter<String>(view.getContext(), R.layout.combo_list_item, R.id.txtView, getResources().getStringArray(R.array.delay_items));
 		((Spinner)view.findViewById(R.id.cboDelay)).setAdapter(adapter);
@@ -139,7 +153,7 @@ public class NavigationPageFrag extends BaseBluetoothFragment implements Adapter
 		((Spinner)view.findViewById(R.id.cboSpeed)).setOnItemSelectedListener(this);
 
 		((Spinner)view.findViewById(R.id.cboSpeed)).setSelection(1);
-		timeTilHandler.postDelayed(updateTimeTil, 100);
+		beliefHandle.postDelayed(getBeliefSet, 100);
 		return view;
 	}
 
@@ -171,6 +185,18 @@ public class NavigationPageFrag extends BaseBluetoothFragment implements Adapter
 	public void onNothingSelected(AdapterView<?> parent)
 	{
 
+	}
+
+	public void doUpdates(boolean update)
+	{
+		if (!update)
+		{
+			beliefHandle.removeCallbacks(getBeliefSet);
+		}
+		else
+		{
+			beliefHandle.post(getBeliefSet);
+		}
 	}
 
 }
