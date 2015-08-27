@@ -11,12 +11,14 @@ import java.util.Random;
 import java.util.concurrent.LinkedBlockingDeque;
 
 /**
+ * Thread that manages the connection to the EV3, also manages Beliefs, Rules and actions
+ *
  * Created by joecollenette on 02/07/2015.
  */
 public class BluetoothRobot implements Runnable
 {
 	public enum ConnectStatus {CONNECTED, DISCONNECTED, CONNECTING, DISCONNECTING}
-	
+
 	public enum BeliefStates
 	{
 		OBSTACLE(0),
@@ -93,6 +95,8 @@ public class BluetoothRobot implements Runnable
 		}
 	}
 
+	//Implements cloneable so when access to the arraylist is outside of this thread
+	//there will be no clashes during the belief update.
 	public static class BeliefSet implements Cloneable
 	{
 		public float distance;
@@ -262,8 +266,10 @@ public class BluetoothRobot implements Runnable
 				}
 				if (doActions)
 				{
+					//Go backwards so actions are put in order
 					for (int j = rule.actions.length - 1; j >= 0; j--)
 					{
+						//Add action to the front of the queue with the delay removed so that the action happens immediately
 						actions.addFirst(new Pair<RobotAction, Long>(rule.getAction(j), SystemClock.uptimeMillis() + delay));
 					}
 				}
@@ -403,12 +409,14 @@ public class BluetoothRobot implements Runnable
     {
         try
         {
+			//Connect to robot
 			generatedException = null;
 			status = ConnectStatus.CONNECTING;
 			robot.connectToRobot(btAddress);
 			status = ConnectStatus.CONNECTED;
 			float disInput;
 			int curSpeed = speed;
+			//While connected or no signal to disconnect
 			while (status == ConnectStatus.CONNECTED)
 			{
 				disInput = robot.getuSensor().getSample();
@@ -417,6 +425,7 @@ public class BluetoothRobot implements Runnable
 				state.colour = Color.rgb((int)(rgb[0] * 850), (int)(rgb[1] * 1026), (int)(rgb[2] * 1815));
 				state.distance = disInput;
 				updateBeliefs(disInput, state.colour);
+				//Create newest copy of beliefs
 				stateCopy = state.clone();
 				if (curSpeed != speed)
 				{
@@ -441,7 +450,7 @@ public class BluetoothRobot implements Runnable
 						break;
 				}
 			}
-
+			//Clear beliefs before disconnect
 			state.states.clear();
 			state.colour = 0;
 			state.distance = 0;

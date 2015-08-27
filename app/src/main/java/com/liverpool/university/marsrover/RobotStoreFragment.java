@@ -9,15 +9,23 @@ import android.support.v4.app.Fragment;
 
 import EV3.BluetoothRobot;
 
+/**
+ * Holds the bluetooth event and prevents loss of bluetooth connection during destruction of
+ * app. (E.G. Rotation Changes)
+ *
+ * Passes data to the EV3 Connection Thread
+ * Created by joecollenette on 02/07/2015.
+ */
 public class RobotStoreFragment extends Fragment
 {
+	//Fragment name for retrieval.
 	public static final String TAG_NAME = "TAG_ROBOT_FRAG";
 	private BluetoothRobot btRobot;
 	private Thread robotThread;
 
 	public RobotStoreFragment()
 	{
-		setRetainInstance(true);
+		setRetainInstance(true); //Prevent destruction of this fragment (and its objects)
 		btRobot = new BluetoothRobot();
 	}
 

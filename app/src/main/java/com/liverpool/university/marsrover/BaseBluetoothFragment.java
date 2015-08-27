@@ -6,6 +6,8 @@ import android.support.v4.app.Fragment;
 import EV3.BluetoothRobot;
 
 /**
+ * Base bluetooth fragment which holds the events that can be used to send data to the
+ * main ui class
  * Created by joecollenette on 30/07/2015.
  */
 public class BaseBluetoothFragment extends Fragment

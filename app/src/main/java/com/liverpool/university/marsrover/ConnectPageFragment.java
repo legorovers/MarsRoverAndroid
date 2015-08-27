@@ -21,6 +21,7 @@ import EV3.BluetoothRobot;
 
 
 /**
+ * Fragment which connects signals the main ui thread to either connect or disconnect
  * A placeholder fragment containing a simple view.
  */
 public class ConnectPageFragment extends BaseBluetoothFragment implements View.OnClickListener
@@ -70,6 +71,7 @@ public class ConnectPageFragment extends BaseBluetoothFragment implements View.O
 		}
 	}
 
+	//Update UI based on current connection status
 	private Runnable getConStatus = new Runnable()
 	{
 		@Override

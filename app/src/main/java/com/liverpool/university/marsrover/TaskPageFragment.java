@@ -16,10 +16,13 @@ import android.widget.TextView;
 import EV3.BluetoothRobot;
 
 /**
+ * Fragment where demonstrations are shown
+ *
  * Created by joecollenette on 30/07/2015.
  */
 public class TaskPageFragment extends BaseBluetoothFragment implements AdapterView.OnItemSelectedListener, View.OnClickListener
 {
+	//Thread to update current beliefs
 	private Runnable getBeliefSet = new Runnable()
 	{
 		@Override

@@ -19,7 +19,12 @@ import java.util.ArrayList;
 import Adapters.MarsListAdapter;
 import EV3.BluetoothRobot;
 
-
+/**
+ * Main UI Thread, manages the external fragments and allows communication between the fragments
+ * and the bluetooth connection. This also manages the navigation drawer.
+ *
+ * Created by joecollenette on 02/07/2015.
+ */
 public class MainPage extends AppCompatActivity implements BaseBluetoothFragment.BTEvents
 {
 
@@ -53,6 +58,7 @@ public class MainPage extends AppCompatActivity implements BaseBluetoothFragment
 		drawerList.setAdapter(drawerAdapter);
 	}
 
+	//Place fragment in view
 	private void changeView(int pos)
 	{
 		FragmentManager fm = getSupportFragmentManager();
@@ -85,6 +91,10 @@ public class MainPage extends AppCompatActivity implements BaseBluetoothFragment
 		drawerLayout.closeDrawers();
 	}
 
+
+	//Adds navigation drawer events
+	//doUpdates, makes the navigation drawer animation smoother by stopping UI updates during the
+	//animation.
 	private void setupDrawer()
 	{
 		drawerToggle = new ActionBarDrawerToggle(this,drawerLayout,
@@ -124,6 +134,7 @@ public class MainPage extends AppCompatActivity implements BaseBluetoothFragment
 	protected void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
+		//Get correct page when activity has been destroyed and recreated (E.G. Screen rotation)
 		if (savedInstanceState != null)
 		{
 			pageNo = savedInstanceState.getInt("pageNo");
@@ -152,6 +163,7 @@ public class MainPage extends AppCompatActivity implements BaseBluetoothFragment
 		aboutPage = new AboutPageFragment();
 		taskPage = new TaskPageFragment();
 
+		//Get bluetooth connection back if activity has been destroyed and recreated.
 		FragmentManager fm = getSupportFragmentManager();
 		robotStore = (RobotStoreFragment)fm.findFragmentByTag(RobotStoreFragment.TAG_NAME);
 
@@ -160,6 +172,7 @@ public class MainPage extends AppCompatActivity implements BaseBluetoothFragment
 			robotStore = new RobotStoreFragment();
 		}
 		changeView(pageNo);
+		//When Application opens so does the drawer, place user directly into app.
 		drawerLayout.closeDrawers();
 	}
 
@@ -198,6 +211,10 @@ public class MainPage extends AppCompatActivity implements BaseBluetoothFragment
 
 		return super.onOptionsItemSelected(item);
 	}
+
+	/**
+	 * The Following events allow communication between fragments and bluetooth connection
+	 */
 
 	@Override
 	public void settingsChanged(float obstacle, int blackMax, int waterMax)

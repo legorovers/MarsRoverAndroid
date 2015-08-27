@@ -26,8 +26,14 @@ import java.util.concurrent.TimeUnit;
 import EV3.BluetoothRobot;
 
 
+/**
+ * Fragement which allows movement of the EV3
+ *
+ * Created by joecollenette on 02/07/2015.
+ */
 public class NavigationPageFrag extends BaseBluetoothFragment implements AdapterView.OnItemSelectedListener
 {
+	//Thread which updates UI with newest beliefs
 	private Runnable getBeliefSet = new Runnable()
 	{
 		long time;
@@ -111,6 +117,7 @@ public class NavigationPageFrag extends BaseBluetoothFragment implements Adapter
 		ArrayAdapter<String> sadapter = new ArrayAdapter<String>(view.getContext(), R.layout.combo_list_item, R.id.txtView, getResources().getStringArray(R.array.speed_items));
 		((Spinner)view.findViewById(R.id.cboSpeed)).setAdapter(sadapter);
 
+		//Set up events for buttons.
 		view.findViewById(R.id.cmdForward).setOnClickListener(new ActionClicked(BluetoothRobot.RobotAction.FORWARD));
 		view.findViewById(R.id.cmdFor_A_Bit).setOnClickListener(new ActionClicked(BluetoothRobot.RobotAction.FORWARD_A_BIT));
 		view.findViewById(R.id.cmdStop).setOnClickListener(new ActionClicked(BluetoothRobot.RobotAction.STOP));
@@ -131,6 +138,7 @@ public class NavigationPageFrag extends BaseBluetoothFragment implements Adapter
 		view.findViewById(R.id.cmdTRABit).setOnClickListener(new ActionClicked(BluetoothRobot.RobotAction.RIGHT_A_BIT));
 		view.findViewById(R.id.cmdTRight).setOnClickListener(new ActionClicked(BluetoothRobot.RobotAction.RIGHT));
 
+		//Change between icons and text on buttons
 		((CheckBox)view.findViewById(R.id.chkImages)).setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener()
 		{
 			@Override
@@ -157,6 +165,7 @@ public class NavigationPageFrag extends BaseBluetoothFragment implements Adapter
 		return view;
 	}
 
+	//Event for both combo boxes
 	@Override
 	public void onItemSelected(AdapterView<?> parent, View view, int position, long id)
 	{

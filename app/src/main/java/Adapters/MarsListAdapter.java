@@ -16,6 +16,9 @@ import com.liverpool.university.marsrover.R;
 import java.util.ArrayList;
 
 /**
+ * List Adapter for navigation list of text and an icon.
+ * Uses mars_list_item as layout file for each item.
+ *
  * Created by joecollenette on 17/07/2015.
  */
 public class MarsListAdapter extends BaseAdapter
