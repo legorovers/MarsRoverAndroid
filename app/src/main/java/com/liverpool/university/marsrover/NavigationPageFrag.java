@@ -117,6 +117,7 @@ public class NavigationPageFrag extends BaseBluetoothFragment implements Adapter
 		ArrayAdapter<String> sadapter = new ArrayAdapter<String>(view.getContext(), R.layout.combo_list_item, R.id.txtView, getResources().getStringArray(R.array.speed_items));
 		((Spinner)view.findViewById(R.id.cboSpeed)).setAdapter(sadapter);
 
+
 		//Set up events for buttons.
 		view.findViewById(R.id.cmdForward).setOnClickListener(new ActionClicked(BluetoothRobot.RobotAction.FORWARD));
 		view.findViewById(R.id.cmdFor_A_Bit).setOnClickListener(new ActionClicked(BluetoothRobot.RobotAction.FORWARD_A_BIT));
@@ -139,18 +140,13 @@ public class NavigationPageFrag extends BaseBluetoothFragment implements Adapter
 		view.findViewById(R.id.cmdTRight).setOnClickListener(new ActionClicked(BluetoothRobot.RobotAction.RIGHT));
 
 		//Change between icons and text on buttons
-		((CheckBox)view.findViewById(R.id.chkImages)).setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener()
-		{
+		((CheckBox)view.findViewById(R.id.chkImages)).setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
 			@Override
-			public void onCheckedChanged(CompoundButton compoundButton, boolean b)
-			{
-				if (b)
-				{
+			public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+				if (b) {
 					getView().findViewById(R.id.tblIconButtons).setVisibility(View.VISIBLE);
 					getView().findViewById(R.id.tblStrButtons).setVisibility(View.GONE);
-				}
-				else
-				{
+				} else {
 					getView().findViewById(R.id.tblIconButtons).setVisibility(View.GONE);
 					getView().findViewById(R.id.tblStrButtons).setVisibility(View.VISIBLE);
 				}

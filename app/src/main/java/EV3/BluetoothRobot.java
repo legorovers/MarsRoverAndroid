@@ -270,7 +270,7 @@ public class BluetoothRobot implements Runnable
 					for (int j = rule.actions.length - 1; j >= 0; j--)
 					{
 						//Add action to the front of the queue with the delay removed so that the action happens immediately
-						actions.addFirst(new Pair<RobotAction, Long>(rule.getAction(j), SystemClock.uptimeMillis() + delay));
+						actions.addFirst(new Pair<RobotAction, Long>(rule.getAction(j), SystemClock.uptimeMillis() - delay));
 					}
 				}
 			}

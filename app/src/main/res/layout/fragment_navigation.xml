@@ -74,15 +74,6 @@
             android:text="Large Text"
             android:id="@+id/txtTimeTil"/>
 
-        <CheckBox
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Use Images"
-            android:id="@+id/chkImages"
-            android:scaleX="2.0"
-            android:scaleY="2.0"
-            android:textSize="11sp"
-            android:layout_marginLeft="40dp"/>
     </LinearLayout>
 
     <LinearLayout
@@ -119,7 +110,7 @@
     </LinearLayout>
 
     <LinearLayout
-        android:orientation="horizontal"
+        android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center"
@@ -128,7 +119,7 @@
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="558dp"
             android:id="@+id/tblStrButtons"
             android:gravity="center"
             android:visibility="visible">
@@ -221,11 +212,12 @@
                 android:layout_toEndOf="@+id/cmdTStop"
                 android:layout_marginStart="5dp"
                 android:textSize="17sp"/>
+
         </RelativeLayout>
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="558dp"
             android:id="@+id/tblIconButtons"
             android:gravity="center"
             android:visibility="gone">
@@ -328,6 +320,18 @@
                 android:layout_centerHorizontal="true"
                 />
         </RelativeLayout>
+
+        <CheckBox
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Use Images"
+            android:id="@+id/chkImages"
+            android:scaleX="2.0"
+            android:scaleY="2.0"
+            android:textSize="11sp"
+            android:layout_marginLeft="40dp"
+            android:layout_above="@+id/cmdTForward"
+            android:layout_alignEnd="@+id/cmdTLeft" />
     </LinearLayout>
 
 </LinearLayout>
