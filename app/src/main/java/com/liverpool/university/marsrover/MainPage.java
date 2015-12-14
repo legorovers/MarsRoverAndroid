@@ -273,7 +273,7 @@ public class MainPage extends AppCompatActivity implements BaseBluetoothFragment
 	@Override
 	public void sendAction(BluetoothRobot.RobotAction action)
 	{
-		robotStore.sendAction(action);
+		robotStore.sendAction(action, false);
 	}
 
 	@Override

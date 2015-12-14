@@ -487,9 +487,11 @@ public class BluetoothRobot implements Runnable
 		running = false;
 	}
 
-	public void addAction(RobotAction action)
+	public void addAction(RobotAction action, boolean mustprocess)
 	{
-		actions.add(new Pair<RobotAction, Long>(action, SystemClock.uptimeMillis()));
+		if (actions.isEmpty() || mustprocess == true) {
+			actions.add(new Pair<RobotAction, Long>(action, SystemClock.uptimeMillis()));
+		}
 	}
 
 	public RobotRule[] getAllRules()

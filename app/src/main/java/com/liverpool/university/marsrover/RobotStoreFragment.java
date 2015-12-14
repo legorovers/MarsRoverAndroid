@@ -97,9 +97,9 @@ public class RobotStoreFragment extends Fragment
 		return btRobot.connectionStatus();
 	}
 
-	public void sendAction(BluetoothRobot.RobotAction action)
+	public void sendAction(BluetoothRobot.RobotAction action, boolean mustprocess)
 	{
-		btRobot.addAction(action);
+		btRobot.addAction(action, mustprocess);
 	}
 
 	public void setMode(BluetoothRobot.RobotMode mode)
