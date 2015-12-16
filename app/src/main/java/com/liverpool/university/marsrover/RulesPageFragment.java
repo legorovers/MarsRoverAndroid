@@ -42,7 +42,7 @@ public class RulesPageFragment extends BaseBluetoothFragment
 	{
 		BluetoothRobot.RobotRule rule = new BluetoothRobot.RobotRule(
 				((CheckBox)getView().findViewById(R.id.chkRule)).isChecked(),
-				BluetoothRobot.BeliefStates.fromInt(((Spinner) getView().findViewById(R.id.cboType)).getSelectedItemPosition()),
+				BluetoothRobot.BeliefPredicates.fromInt(((Spinner) getView().findViewById(R.id.cboType)).getSelectedItemPosition()),
 				((Spinner) getView().findViewById(R.id.cboObstacle)).getSelectedItemPosition(),
 				BluetoothRobot.RobotAction.fromInt(((Spinner) getView().findViewById(R.id.cboAction1)).getSelectedItemPosition()),
 				BluetoothRobot.RobotAction.fromInt(((Spinner) getView().findViewById(R.id.cboAction2)).getSelectedItemPosition()),
