@@ -158,7 +158,7 @@ public class BluetoothRobot implements Runnable
 		}
 	}
 
-    private Robot robot;
+    private Robot abstraction_engine;
     private Exception generatedException;
 	private String btAddress;
 	private LinkedBlockingDeque<Pair<RobotAction, Long>> actions;
@@ -333,20 +333,20 @@ public class BluetoothRobot implements Runnable
 		{
 			if (state.states.contains(BeliefStates.OBSTACLE))
 			{
-				robot.stop();
-				robot.short_left();
+				abstraction_engine.stop();
+				abstraction_engine.short_left();
 			}
 			else
 			{
-				if (!robot.isMoving())
+				if (!abstraction_engine.isMoving())
 				{
-					robot.forward();
+					abstraction_engine.forward();
 				}
 			}
 		}
 		else
 		{
-			robot.stop();
+			abstraction_engine.stop();
 		}
 	}
 
@@ -356,16 +356,16 @@ public class BluetoothRobot implements Runnable
 		{
 			if (!state.states.contains(BeliefStates.PATH))
 			{
-				robot.forward_right();
+				abstraction_engine.forward_right();
 			}
 			else
 			{
-				robot.forward_left();
+				abstraction_engine.forward_left();
 			}
 		}
 		else
 		{
-			robot.stop();
+			abstraction_engine.stop();
 		}
 	}
 
@@ -385,22 +385,22 @@ public class BluetoothRobot implements Runnable
 				}
 				else if (!state.states.contains(BeliefStates.OBSTACLE))
 				{
-					robot.forward();
+					abstraction_engine.forward();
 				}
 				else
 				{
-					robot.turn(45 + rTurn.nextInt(135));
+					abstraction_engine.turn(45 + rTurn.nextInt(135));
 				}
 			}
 			else
 			{
 				running = false;
-				robot.stop();
+				abstraction_engine.stop();
 			}
 		}
 		else
 		{
-			robot.stop();
+			abstraction_engine.stop();
 		}
 	}
 
@@ -412,15 +412,15 @@ public class BluetoothRobot implements Runnable
 			//Connect to robot
 			generatedException = null;
 			status = ConnectStatus.CONNECTING;
-			robot.connectToRobot(btAddress);
+			abstraction_engine.connectToRobot(btAddress);
 			status = ConnectStatus.CONNECTED;
 			float disInput;
 			int curSpeed = speed;
 			//While connected or no signal to disconnect
 			while (status == ConnectStatus.CONNECTED)
 			{
-				disInput = robot.getuSensor().getSample();
-				float[] rgb = robot.getRGBSensor().getRGBSample();
+				disInput = abstraction_engine.getuSensor().getSample();
+				float[] rgb = abstraction_engine.getRGBSensor().getRGBSample();
 				//Log.w("Colour Values", "R - " + (int) (rgb[0] * 850) + " G - " + (int) (rgb[1] * 1026) + " B - " + (int) (rgb[2] * 1815));
 				state.colour = Color.rgb((int)(rgb[0] * 850), (int)(rgb[1] * 1026), (int)(rgb[2] * 1815));
 				state.distance = disInput;
@@ -429,7 +429,7 @@ public class BluetoothRobot implements Runnable
 				stateCopy = state.clone();
 				if (curSpeed != speed)
 				{
-					robot.setTravelSpeed(speed);
+					abstraction_engine.setTravelSpeed(speed);
 					curSpeed = speed;
 				}
 
@@ -454,16 +454,16 @@ public class BluetoothRobot implements Runnable
 			state.states.clear();
 			state.colour = 0;
 			state.distance = 0;
-			robot.close();
+			abstraction_engine.close();
 			status = ConnectStatus.DISCONNECTED;
 
         }
         catch (Exception e)
         {
 			status = ConnectStatus.DISCONNECTING;
-			if (robot != null && robot.isConnected())
+			if (abstraction_engine != null && abstraction_engine.isConnected())
 			{
-				robot.close();
+				abstraction_engine.close();
 			}
 			status = ConnectStatus.DISCONNECTED;
             generatedException = e;
@@ -482,7 +482,7 @@ public class BluetoothRobot implements Runnable
 		};
 		
 		state = new BeliefSet();
-		robot = new Robot();
+		abstraction_engine = new Robot();
 		mode = RobotMode.MANUAL;
 		running = false;
 	}
