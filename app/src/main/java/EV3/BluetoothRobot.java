@@ -438,8 +438,8 @@ public class BluetoothRobot implements Runnable
 			//While connected or no signal to disconnect
 			while (status == ConnectStatus.CONNECTED)
 			{
-               //  env.eachrun();
-                // reasoningengine.reason();
+                // env.eachrun();
+                reasoningengine.reason();
 				disInput = abstraction_engine.getuSensor().getSample();
 				float[] rgb = abstraction_engine.getRGBSensor().getRGBSample();
 				//Log.w("Colour Values", "R - " + (int) (rgb[0] * 850) + " G - " + (int) (rgb[1] * 1026) + " B - " + (int) (rgb[2] * 1815));
@@ -516,6 +516,9 @@ public class BluetoothRobot implements Runnable
             aiLexception.printStackTrace();
         }
         mas.addAg(reasoningengine);
+        env.addAgent(reasoningengine);
+
+        // EASSAgent fake_abstractionengine = new EASSagent
 
         env.addRobot("robot", abstraction_engine);
 	}
