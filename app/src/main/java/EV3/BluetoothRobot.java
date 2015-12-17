@@ -295,31 +295,31 @@ public class BluetoothRobot implements Runnable
 					switch (actionPair.first)
 					{
 						case FORWARD:
-							robot.forward();
+							abstraction_engine.forward();
 							break;
 						case FORWARD_A_BIT:
-							robot.short_forward();
+							abstraction_engine.short_forward();
 							break;
 						case STOP:
-							robot.stop();
+							abstraction_engine.stop();
 							break;
 						case BACKWARD_A_BIT:
-							robot.short_backward();
+							abstraction_engine.short_backward();
 							break;
 						case BACKWARD:
-							robot.backward();
+							abstraction_engine.backward();
 							break;
 						case LEFT:
-							robot.left();
+							abstraction_engine.left();
 							break;
 						case LEFT_A_BIT:
-							robot.short_left();
+							abstraction_engine.short_left();
 							break;
 						case RIGHT:
-							robot.right();
+							abstraction_engine.right();
 							break;
 						case RIGHT_A_BIT:
-							robot.short_right();
+							abstraction_engine.short_right();
 							break;
 					}
 				}
@@ -522,17 +522,17 @@ public class BluetoothRobot implements Runnable
 
 	public void close()
 	{
-		if (robot != null)
+		if (abstraction_engine != null)
 		{
-			robot.close();
+			abstraction_engine.close();
 		}
 	}
 
 	public String getMessages()
 	{
-		if (robot != null)
+		if (abstraction_engine != null)
 		{
-			return robot.getMessages();
+			return abstraction_engine.getMessages();
 		}
 		else
 		{
