@@ -114,7 +114,7 @@ public class BluetoothRobot implements Runnable
 
 	//Implements cloneable so when access to the arraylist is outside of this thread
 	//there will be no clashes during the belief update.
-	public static class BeliefSet implements Cloneable
+	/* public static class BeliefSet implements Cloneable
 	{
 		public float distance;
 		public int colour;
@@ -129,7 +129,7 @@ public class BluetoothRobot implements Runnable
 			b.states = (ArrayList<BeliefPredicates>)states.clone();
 			return b;
 		}
-	}
+	} */
 
 	public static class RobotRule
 	{
@@ -185,8 +185,8 @@ public class BluetoothRobot implements Runnable
 	private RobotMode mode;
 	private boolean running;
 	
-	private BeliefSet state;
-	private BeliefSet stateCopy;
+	// private BeliefSet state;
+	// private BeliefSet stateCopy;
 	private boolean obstacleChanged;
 	private boolean pathChanged;
 	private boolean waterChanged;
@@ -206,7 +206,7 @@ public class BluetoothRobot implements Runnable
     private EASSEV3Environment env;
     private EASSAgent reasoningengine;
 
-	private void updateBeliefs(float distance, int colour)
+	/* private void updateBeliefs(float distance, int colour)
 	{
 		boolean curObs = state.states.contains(BeliefPredicates.OBSTACLE);
 		if (Float.compare(distance, objectDetected) < 0)
@@ -262,7 +262,7 @@ public class BluetoothRobot implements Runnable
 		}
 		waterChanged = curWater != state.states.contains(BeliefPredicates.WATER);
 
-	}
+	} */
 
 	private void checkRules()
 	{
@@ -447,14 +447,14 @@ public class BluetoothRobot implements Runnable
 			{
                 env.eachrun();
                 reasoningengine.reason();
-				disInput = abstraction_engine.getuSensor().getSample();
-				float[] rgb = abstraction_engine.getRGBSensor().getRGBSample();
+				// disInput = robot.getuSensor().getSample();
+				// float[] rgb = robot.getRGBSensor().getRGBSample();
 				//Log.w("Colour Values", "R - " + (int) (rgb[0] * 850) + " G - " + (int) (rgb[1] * 1026) + " B - " + (int) (rgb[2] * 1815));
-				state.colour = Color.rgb((int)(rgb[0] * 850), (int)(rgb[1] * 1026), (int)(rgb[2] * 1815));
-				state.distance = disInput;
-				updateBeliefs(disInput, state.colour);
+				//state.colour = Color.rgb((int)(rgb[0] * 850), (int)(rgb[1] * 1026), (int)(rgb[2] * 1815));
+				//state.distance = disInput;
+				// updateBeliefs(disInput, state.colour);
 				//Create newest copy of beliefs
-				stateCopy = state.clone();
+				// stateCopy = state.clone();
 				if (curSpeed != speed)
 				{
 					abstraction_engine.setTravelSpeed(speed);
@@ -598,10 +598,10 @@ public class BluetoothRobot implements Runnable
 		rules[pos] = rule;
 	}
 
-	public BeliefSet getBeliefSet()
+	/* public BeliefSet getBeliefSet()
 	{
 		return stateCopy;
-	}
+	} */
 
 	public void setMode(RobotMode _mode)
 	{
@@ -632,9 +632,8 @@ public class BluetoothRobot implements Runnable
 		return running;
 	}
 
-	public int getColourFound()
-	{
-	 	//return state.colour;
-		return 0;
-	}
+	// public int getColourFound()
+	// {
+	// 	return state.colour;
+	// }
 }
