@@ -10,20 +10,6 @@ import java.util.ArrayList;
 import java.util.Random;
 import java.util.concurrent.LinkedBlockingDeque;
 
-import ail.mas.AIL;
-import ail.mas.MAS;
-import ail.syntax.GBelief;
-import ail.syntax.Guard;
-import ail.syntax.Predicate;
-import ail.syntax.Unifier;
-import ail.util.AILConfig;
-import ail.util.AILexception;
-
-import ail.util.AILexception;
-import ajpf.MCAPLcontroller;
-
-import eass.semantics.EASSAgent;
-
 /**
  * Thread that manages the connection to the EV3, also manages Beliefs, Rules and actions
  *
@@ -33,26 +19,26 @@ public class BluetoothRobot implements Runnable
 {
 	public enum ConnectStatus {CONNECTED, DISCONNECTED, CONNECTING, DISCONNECTING}
 
-	public enum BeliefPredicates
+	public enum BeliefStates
 	{
-		OBSTACLE(new Predicate("Obstacle")),
-		WATER(new Predicate("Water")),
-		PATH(new Predicate("Path"));
+		OBSTACLE(0),
+		WATER(1),
+		PATH(2);
 
-		static BeliefPredicates[] a = BeliefPredicates.values();
+		static BeliefStates[] a = BeliefStates.values();
 
-		Predicate value;
-		BeliefPredicates(Predicate p)
+		int value;
+		BeliefStates(int i)
 		{
-			value = p;
+			value = i;
 		}
 
-		public Predicate toPredicate()
+		public int toInt()
 		{
 			return value;
 		}
 
-		/* public static BeliefPredicates fromInt(int i)
+		public static BeliefStates fromInt(int i)
 		{
 			for (int j = 0; j < a.length; j++)
 			{
@@ -62,7 +48,7 @@ public class BluetoothRobot implements Runnable
 				}
 			}
 			return OBSTACLE;
-		} */
+		}
 
 	}
 
@@ -111,11 +97,11 @@ public class BluetoothRobot implements Runnable
 
 	//Implements cloneable so when access to the arraylist is outside of this thread
 	//there will be no clashes during the belief update.
-	/* public static class BeliefSet implements Cloneable
+	public static class BeliefSet implements Cloneable
 	{
 		public float distance;
 		public int colour;
-		public ArrayList<BeliefPredicates> states = new ArrayList<BeliefPredicates>();
+		public ArrayList<BeliefStates> states = new ArrayList<BeliefStates>();
 
 		@Override
 		public BeliefSet clone()
@@ -123,27 +109,27 @@ public class BluetoothRobot implements Runnable
 			BeliefSet b = new BeliefSet();
 			b.distance = distance;
 			b.colour = colour;
-			b.states = (ArrayList<BeliefPredicates>)states.clone();
+			b.states = (ArrayList<BeliefStates>)states.clone();
 			return b;
 		}
-	} */
+	}
 
 	public static class RobotRule
 	{
 		private boolean on;
-		private BeliefPredicates type;
+		private BeliefStates type;
 		private RobotAction[] actions;
 		private int onAppeared;
 
 		public RobotRule()
 		{
 			on = false;
-			type = BeliefPredicates.OBSTACLE;
+			type = BeliefStates.OBSTACLE;
 			onAppeared = 0;
 			actions = new RobotAction[]{RobotAction.NOTHING, RobotAction.NOTHING, RobotAction.NOTHING};
 		}
 		
-		public RobotRule(boolean _on, BeliefPredicates _type, int appeared, RobotAction action1, RobotAction action2, RobotAction action3)
+		public RobotRule(boolean _on, BeliefStates _type, int appeared, RobotAction action1, RobotAction action2, RobotAction action3)
 		{
 			type = _type;
 			on = _on;
@@ -166,7 +152,7 @@ public class BluetoothRobot implements Runnable
 			return actions[pos];
 		}
 
-		public BeliefPredicates getType()
+		public BeliefStates getType()
 		{
 			return type;
 		}
@@ -182,8 +168,8 @@ public class BluetoothRobot implements Runnable
 	private RobotMode mode;
 	private boolean running;
 	
-	// private BeliefSet state;
-	// private BeliefSet stateCopy;
+	private BeliefSet state;
+	private BeliefSet stateCopy;
 	private boolean obstacleChanged;
 	private boolean pathChanged;
 	private boolean waterChanged;
@@ -199,67 +185,63 @@ public class BluetoothRobot implements Runnable
 	private long delay = 0;
 	private long untilAction = 0;
 
-    private MAS mas;
-    private EASSEV3Environment env;
-    private EASSAgent reasoningengine;
-
-	/* private void updateBeliefs(float distance, int colour)
+	private void updateBeliefs(float distance, int colour)
 	{
-		boolean curObs = state.states.contains(BeliefPredicates.OBSTACLE);
+		boolean curObs = state.states.contains(BeliefStates.OBSTACLE);
 		if (Float.compare(distance, objectDetected) < 0)
 		{
-			if (!state.states.contains(BeliefPredicates.OBSTACLE))
+			if (!state.states.contains(BeliefStates.OBSTACLE))
 			{
-				state.states.add(BeliefPredicates.OBSTACLE);
+				state.states.add(BeliefStates.OBSTACLE);
 			}
 		}
 		else
 		{
-			if (state.states.contains(BeliefPredicates.OBSTACLE))
+			if (state.states.contains(BeliefStates.OBSTACLE))
 			{
-				state.states.remove(BeliefPredicates.OBSTACLE);
+				state.states.remove(BeliefStates.OBSTACLE);
 			}
 		}
-		obstacleChanged = curObs != state.states.contains(BeliefPredicates.OBSTACLE);
+		obstacleChanged = curObs != state.states.contains(BeliefStates.OBSTACLE);
 		int red = Color.red(colour);
 		int blue = Color.blue(colour);
 		int green = Color.green(colour);
 
-		boolean curPath = state.states.contains(BeliefPredicates.PATH);
+		boolean curPath = state.states.contains(BeliefStates.PATH);
 		if ((red < blackMax) && (blue < blackMax) && (green < blackMax))
 		{
-			if (!state.states.contains(BeliefPredicates.PATH))
+			if (!state.states.contains(BeliefStates.PATH))
 			{
-				state.states.add(BeliefPredicates.PATH);
+				state.states.add(BeliefStates.PATH);
 			}
 		}
 		else
 		{
-			if (state.states.contains(BeliefPredicates.PATH))
+			if (state.states.contains(BeliefStates.PATH))
 			{
-				state.states.remove(BeliefPredicates.PATH);
+				state.states.remove(BeliefStates.PATH);
 			}
 		}
-		pathChanged = curPath != state.states.contains(BeliefPredicates.PATH);
+		pathChanged = curPath != state.states.contains(BeliefStates.PATH);
 
-		boolean curWater = state.states.contains(BeliefPredicates.WATER);
+		boolean curWater = state.states.contains(BeliefStates.WATER);
 		if (((blue > green) && (blue > red)) && ((red < waterMax) && (blue < waterMax) && (green < waterMax)))
 		{
-			if (!state.states.contains(BeliefPredicates.WATER))
+			if (!state.states.contains(BeliefStates.WATER))
 			{
-				state.states.add(BeliefPredicates.WATER);
+				state.states.add(BeliefStates.WATER);
 			}
 		}
 		else
 		{
-			if (state.states.contains(BeliefPredicates.WATER))
+			if (state.states.contains(BeliefStates.WATER))
 			{
-				state.states.remove(BeliefPredicates.WATER);
+				state.states.remove(BeliefStates.WATER);
 			}
 		}
-		waterChanged = curWater != state.states.contains(BeliefPredicates.WATER);
+		waterChanged = curWater != state.states.contains(BeliefStates.WATER);
 
-	} */
+	}
 
 	private void checkRules()
 	{
@@ -273,13 +255,13 @@ public class BluetoothRobot implements Runnable
 				switch (rule.getType())
 				{
 					case WATER:
-						doActions = waterChanged && (onAppeared == reasoningengine.believesyn(new Guard(new GBelief(BeliefPredicates.WATER.toPredicate())), new Unifier()));
+						doActions = waterChanged && (onAppeared == state.states.contains(BeliefStates.WATER));
 						break;
 					case OBSTACLE:
-						doActions = obstacleChanged && (onAppeared == reasoningengine.believesyn(new Guard(new GBelief(BeliefPredicates.OBSTACLE.toPredicate())), new Unifier()));
+						doActions = obstacleChanged && (onAppeared == state.states.contains(BeliefStates.OBSTACLE));
 						break;
 					case PATH:
-						doActions = pathChanged && (onAppeared == reasoningengine.believesyn(new Guard(new GBelief(BeliefPredicates.PATH.toPredicate())), new Unifier()));
+						doActions = pathChanged && (onAppeared == state.states.contains(BeliefStates.OBSTACLE));
 						break;
 				}
 				if (doActions)
@@ -349,7 +331,7 @@ public class BluetoothRobot implements Runnable
 	{
 		if (running)
 		{
-			if (reasoningengine.believesyn(new Guard(new GBelief(BeliefPredicates.WATER.toPredicate())), new Unifier()))
+			if (state.states.contains(BeliefStates.OBSTACLE))
 			{
 				robot.stop();
 				robot.short_left();
@@ -372,7 +354,7 @@ public class BluetoothRobot implements Runnable
 	{
 		if (running)
 		{
-			if (!reasoningengine.believesyn(new Guard(new GBelief(BeliefPredicates.PATH.toPredicate())), new Unifier()))
+			if (!state.states.contains(BeliefStates.PATH))
 			{
 				robot.forward_right();
 			}
@@ -391,9 +373,9 @@ public class BluetoothRobot implements Runnable
 	{
 		if (running)
 		{
-			if (!reasoningengine.believesyn(new Guard(new GBelief(BeliefPredicates.WATER.toPredicate())), new Unifier()))
+			if (!state.states.contains(BeliefStates.WATER))
 			{
-				if (!pathFound && reasoningengine.believesyn(new Guard(new GBelief(BeliefPredicates.PATH.toPredicate())), new Unifier()))
+				if (!pathFound && state.states.contains(BeliefStates.PATH))
 				{
 					pathFound = true;
 				}
@@ -401,7 +383,7 @@ public class BluetoothRobot implements Runnable
 				{
 					doLine();
 				}
-				else if (!reasoningengine.believesyn(new Guard(new GBelief(BeliefPredicates.OBSTACLE.toPredicate())), new Unifier()))
+				else if (!state.states.contains(BeliefStates.OBSTACLE))
 				{
 					robot.forward();
 				}
@@ -435,23 +417,16 @@ public class BluetoothRobot implements Runnable
 			float disInput;
 			int curSpeed = speed;
 			//While connected or no signal to disconnect
-
-            MCAPLcontroller control;
-            control = new MCAPLcontroller(mas, "", new AILConfig());
-            // control.begin();
-
 			while (status == ConnectStatus.CONNECTED)
 			{
-                env.eachrun();
-                reasoningengine.reason();
-				// disInput = robot.getuSensor().getSample();
-				// float[] rgb = robot.getRGBSensor().getRGBSample();
+				disInput = robot.getuSensor().getSample();
+				float[] rgb = robot.getRGBSensor().getRGBSample();
 				//Log.w("Colour Values", "R - " + (int) (rgb[0] * 850) + " G - " + (int) (rgb[1] * 1026) + " B - " + (int) (rgb[2] * 1815));
-				//state.colour = Color.rgb((int)(rgb[0] * 850), (int)(rgb[1] * 1026), (int)(rgb[2] * 1815));
-				//state.distance = disInput;
-				// updateBeliefs(disInput, state.colour);
+				state.colour = Color.rgb((int)(rgb[0] * 850), (int)(rgb[1] * 1026), (int)(rgb[2] * 1815));
+				state.distance = disInput;
+				updateBeliefs(disInput, state.colour);
 				//Create newest copy of beliefs
-				// stateCopy = state.clone();
+				stateCopy = state.clone();
 				if (curSpeed != speed)
 				{
 					robot.setTravelSpeed(speed);
@@ -476,12 +451,11 @@ public class BluetoothRobot implements Runnable
 				}
 			}
 			//Clear beliefs before disconnect
-			// state.states.clear();
-			// state.colour = 0;
-			// state.distance = 0;
+			state.states.clear();
+			state.colour = 0;
+			state.distance = 0;
 			robot.close();
 			status = ConnectStatus.DISCONNECTED;
-            mas.cleanup();
 
         }
         catch (Exception e)
@@ -507,26 +481,11 @@ public class BluetoothRobot implements Runnable
 				new RobotRule()
 		};
 		
-		//state = new BeliefSet();
+		state = new BeliefSet();
 		robot = new Robot();
 		mode = RobotMode.MANUAL;
 		running = false;
-
-        MAS mas = new MAS();
-        EASSEV3Environment env = new EASSEV3Environment();
-        mas.setEnv(env);
-        EASSAgent agent = null;
-        try {
-            agent = new EASSAgent("robot");
-        } catch (AILexception aiLexception) {
-            aiLexception.printStackTrace();
-        }
-            mas.addAg(agent);
-
-        env.addRobot("robot", robot);
-
-
-    }
+	}
 
 	public void addAction(RobotAction action, boolean mustprocess)
 	{
@@ -595,10 +554,10 @@ public class BluetoothRobot implements Runnable
 		rules[pos] = rule;
 	}
 
-	/* public BeliefSet getBeliefSet()
+	public BeliefSet getBeliefSet()
 	{
 		return stateCopy;
-	} */
+	}
 
 	public void setMode(RobotMode _mode)
 	{
@@ -629,8 +588,8 @@ public class BluetoothRobot implements Runnable
 		return running;
 	}
 
-	// public int getColourFound()
-	// {
-	// 	return state.colour;
-	// }
+	public int getColourFound()
+	{
+		return state.colour;
+	}
 }
