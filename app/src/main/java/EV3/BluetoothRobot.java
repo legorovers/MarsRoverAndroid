@@ -270,6 +270,8 @@ public class BluetoothRobot implements Runnable
     EASSEV3Environment env = new EASSEV3Environment();
     EASSAgent reasoningengine;
 
+    // private int beliefchangecounter = 0;
+
 	private void updateBeliefs(float distance, int colour)
 	{
 		boolean curObs = state.states.contains(BeliefStates.OBSTACLE);
@@ -279,16 +281,22 @@ public class BluetoothRobot implements Runnable
 			{
 				state.states.add(BeliefStates.OBSTACLE);
                 env.addSharedBelief("robot", new Literal("obstacle"));
-
+                // beliefchangecounter = 0;
 			}
 		}
 		else
 		{
 			if (state.states.contains(BeliefStates.OBSTACLE))
 			{
-				state.states.remove(BeliefStates.OBSTACLE);
-                env.removeSharedBelief("robot", new Literal("obstacle"));
+              //   if (beliefchangecounter > 2) {
+                    state.states.remove(BeliefStates.OBSTACLE);
+                    env.removeSharedBelief("robot", new Literal("obstacle"));
+              //      beliefchangecounter = 0;
+              //  } else {
+             //       beliefchangecounter++;
+             //   }
 			}
+
 		}
 		obstacleChanged = curObs != state.states.contains(BeliefStates.OBSTACLE);
 		int red = Color.red(colour);
@@ -516,8 +524,11 @@ public class BluetoothRobot implements Runnable
 			while (status == ConnectStatus.CONNECTED)
 			{
                 // env.eachrun();
-                reasoningengine.reason();
-				disInput = abstraction_engine.getuSensor().getSample();
+                for (int i = 0; i < 10; i++) {
+                    reasoningengine.reason();
+                }
+
+                disInput = abstraction_engine.getuSensor().getSample();
 				float[] rgb = abstraction_engine.getRGBSensor().getRGBSample();
 				//Log.w("Colour Values", "R - " + (int) (rgb[0] * 850) + " G - " + (int) (rgb[1] * 1026) + " B - " + (int) (rgb[2] * 1815));
 				state.colour = Color.rgb((int)(rgb[0] * 850), (int)(rgb[1] * 1026), (int)(rgb[2] * 1815));
