@@ -35,18 +35,16 @@ public class BluetoothRobot implements Runnable
 
 	public enum BeliefPredicates
 	{
-		OBSTACLE(new Predicate("Obstacle"), 0),
-		WATER(new Predicate("Water"), 1),
-		PATH(new Predicate("Path"), 2);
+		OBSTACLE(new Predicate("Obstacle")),
+		WATER(new Predicate("Water")),
+		PATH(new Predicate("Path"));
 
-		//static BeliefPredicates[] a = BeliefPredicates.values();
+		static BeliefPredicates[] a = BeliefPredicates.values();
 
 		Predicate value;
-		int number;
-		BeliefPredicates(Predicate p, int i)
+		BeliefPredicates(Predicate p)
 		{
 			value = p;
-			number = i;
 		}
 
 		public Predicate toPredicate()
@@ -54,18 +52,17 @@ public class BluetoothRobot implements Runnable
 			return value;
 		}
 
-		public int toInt() {return number;}
-
-		public static BeliefPredicates fromInt(int i)
+		/* public static BeliefPredicates fromInt(int i)
 		{
-			if (i == 0) {
-				return OBSTACLE;
-			} else if (i == 1) {
-				return WATER;
-			} else {
-				return PATH;
+			for (int j = 0; j < a.length; j++)
+			{
+				if (a[j].toInt() == i)
+				{
+					return a[j];
+				}
 			}
-		}
+			return OBSTACLE;
+		} */
 
 	}
 
@@ -175,7 +172,7 @@ public class BluetoothRobot implements Runnable
 		}
 	}
 
-    private Robot abstraction_engine;
+    private Robot robot;
     private Exception generatedException;
 	private String btAddress;
 	private LinkedBlockingDeque<Pair<RobotAction, Long>> actions;
@@ -316,31 +313,31 @@ public class BluetoothRobot implements Runnable
 					switch (actionPair.first)
 					{
 						case FORWARD:
-							abstraction_engine.forward();
+							robot.forward();
 							break;
 						case FORWARD_A_BIT:
-							abstraction_engine.short_forward();
+							robot.short_forward();
 							break;
 						case STOP:
-							abstraction_engine.stop();
+							robot.stop();
 							break;
 						case BACKWARD_A_BIT:
-							abstraction_engine.short_backward();
+							robot.short_backward();
 							break;
 						case BACKWARD:
-							abstraction_engine.backward();
+							robot.backward();
 							break;
 						case LEFT:
-							abstraction_engine.left();
+							robot.left();
 							break;
 						case LEFT_A_BIT:
-							abstraction_engine.short_left();
+							robot.short_left();
 							break;
 						case RIGHT:
-							abstraction_engine.right();
+							robot.right();
 							break;
 						case RIGHT_A_BIT:
-							abstraction_engine.short_right();
+							robot.short_right();
 							break;
 					}
 				}
@@ -354,20 +351,20 @@ public class BluetoothRobot implements Runnable
 		{
 			if (reasoningengine.believesyn(new Guard(new GBelief(BeliefPredicates.WATER.toPredicate())), new Unifier()))
 			{
-				abstraction_engine.stop();
-				abstraction_engine.short_left();
+				robot.stop();
+				robot.short_left();
 			}
 			else
 			{
-				if (!abstraction_engine.isMoving())
+				if (!robot.isMoving())
 				{
-					abstraction_engine.forward();
+					robot.forward();
 				}
 			}
 		}
 		else
 		{
-			abstraction_engine.stop();
+			robot.stop();
 		}
 	}
 
@@ -377,16 +374,16 @@ public class BluetoothRobot implements Runnable
 		{
 			if (!reasoningengine.believesyn(new Guard(new GBelief(BeliefPredicates.PATH.toPredicate())), new Unifier()))
 			{
-				abstraction_engine.forward_right();
+				robot.forward_right();
 			}
 			else
 			{
-				abstraction_engine.forward_left();
+				robot.forward_left();
 			}
 		}
 		else
 		{
-			abstraction_engine.stop();
+			robot.stop();
 		}
 	}
 
@@ -406,22 +403,22 @@ public class BluetoothRobot implements Runnable
 				}
 				else if (!reasoningengine.believesyn(new Guard(new GBelief(BeliefPredicates.OBSTACLE.toPredicate())), new Unifier()))
 				{
-					abstraction_engine.forward();
+					robot.forward();
 				}
 				else
 				{
-					abstraction_engine.turn(45 + rTurn.nextInt(135));
+					robot.turn(45 + rTurn.nextInt(135));
 				}
 			}
 			else
 			{
 				running = false;
-				abstraction_engine.stop();
+				robot.stop();
 			}
 		}
 		else
 		{
-			abstraction_engine.stop();
+			robot.stop();
 		}
 	}
 
@@ -433,7 +430,7 @@ public class BluetoothRobot implements Runnable
 			//Connect to robot
 			generatedException = null;
 			status = ConnectStatus.CONNECTING;
-			abstraction_engine.connectToRobot(btAddress);
+			robot.connectToRobot(btAddress);
 			status = ConnectStatus.CONNECTED;
 			float disInput;
 			int curSpeed = speed;
@@ -457,7 +454,7 @@ public class BluetoothRobot implements Runnable
 				// stateCopy = state.clone();
 				if (curSpeed != speed)
 				{
-					abstraction_engine.setTravelSpeed(speed);
+					robot.setTravelSpeed(speed);
 					curSpeed = speed;
 				}
 
@@ -482,7 +479,7 @@ public class BluetoothRobot implements Runnable
 			// state.states.clear();
 			// state.colour = 0;
 			// state.distance = 0;
-			abstraction_engine.close();
+			robot.close();
 			status = ConnectStatus.DISCONNECTED;
             mas.cleanup();
 
@@ -490,9 +487,9 @@ public class BluetoothRobot implements Runnable
         catch (Exception e)
         {
 			status = ConnectStatus.DISCONNECTING;
-			if (abstraction_engine != null && abstraction_engine.isConnected())
+			if (robot != null && robot.isConnected())
 			{
-				abstraction_engine.close();
+				robot.close();
 			}
 			status = ConnectStatus.DISCONNECTED;
             generatedException = e;
@@ -511,7 +508,7 @@ public class BluetoothRobot implements Runnable
 		};
 		
 		//state = new BeliefSet();
-		abstraction_engine = new Robot();
+		robot = new Robot();
 		mode = RobotMode.MANUAL;
 		running = false;
 
@@ -526,7 +523,7 @@ public class BluetoothRobot implements Runnable
         }
             mas.addAg(agent);
 
-        env.addRobot("robot", abstraction_engine);
+        env.addRobot("robot", robot);
 
 
     }
@@ -566,17 +563,17 @@ public class BluetoothRobot implements Runnable
 
 	public void close()
 	{
-		if (abstraction_engine != null)
+		if (robot != null)
 		{
-			abstraction_engine.close();
+			robot.close();
 		}
 	}
 
 	public String getMessages()
 	{
-		if (abstraction_engine != null)
+		if (robot != null)
 		{
-			return abstraction_engine.getMessages();
+			return robot.getMessages();
 		}
 		else
 		{
