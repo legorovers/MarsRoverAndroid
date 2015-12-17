@@ -149,12 +149,31 @@ public class EASSEV3Environment extends DefaultEASSEnvironment {
 	public Unifier executeAction(String agName, Action act) throws AILexception {
 	   
 		Unifier u = new Unifier();
-		if (act.getFunctor().equals("shutdown")) {
+		/* if (act.getFunctor().equals("shutdown")) {
 			stopRunning();
 		} else {
 			u = super.executeAction(agName, act);
+		} */
+		if (act.getFunctor().equals("forward")) {
+			((Robot) robots.get(agName)).forward();
+		} else if (act.getFunctor().equals("forward_a_bit")) {
+			((Robot) robots.get(agName)).short_forward();
+		} else if (act.getFunctor().equals("backward")) {
+			((Robot) robots.get(agName)).backward();
+		} else if (act.getFunctor().equals("backward_a_bit")) {
+			((Robot) robots.get(agName)).short_backward();
+		} else if (act.getFunctor().equals("left")) {
+			((Robot) robots.get(agName)).left();
+		} else if (act.getFunctor().equals("left_a_bit")) {
+			((Robot) robots.get(agName)).short_left();
+		} else if (act.getFunctor().equals("right")) {
+			((Robot) robots.get(agName)).right();
+		} else if (act.getFunctor().equals("right_a_bit")) {
+			((Robot) robots.get(agName)).short_right();
+		} else if (act.getFunctor().equals("stop")){
+			((Robot) robots.get(agName)).stop();
 		}
-		
+
 		return u;
 	  }
 		

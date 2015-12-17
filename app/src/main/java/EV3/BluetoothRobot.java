@@ -11,7 +11,12 @@ import java.util.Random;
 import java.util.concurrent.LinkedBlockingDeque;
 
 import ail.mas.MAS;
+import ail.syntax.Action;
 import ail.syntax.Literal;
+import ail.syntax.Plan;
+import ail.syntax.Deed;
+import ail.syntax.Event;
+import ail.syntax.Guard;
 import ail.util.AILexception;
 import eass.semantics.EASSAgent;
 
@@ -54,6 +59,16 @@ public class BluetoothRobot implements Runnable
 			}
 			return OBSTACLE;
 		}
+
+        public Literal toLiteral() {
+            if (value == 0) {
+                return new Literal("obstacle");
+            } else if (value == 1) {
+                return new Literal("water");
+            } else {
+                return new Literal("path");
+            }
+        }
 
 	}
 
@@ -98,6 +113,30 @@ public class BluetoothRobot implements Runnable
 			}
 			return NOTHING;
 		}
+
+        public Action toAILAction() {
+            if (value == 0) {
+                return new Action("nothing");
+            } else if (value == 1) {
+                return new Action("forward");
+            } else if (value == 2) {
+                return new Action("forward_a_bit");
+            } else if (value == 3) {
+                return new Action("backward");
+            } else if (value == 4) {
+                return new Action("backward_a_bit");
+            } else if (value == 5) {
+                return new Action("left");
+            } else if (value == 6) {
+                return new Action("left_a_bit");
+            } else if (value == 7) {
+                return new Action("right");
+            } else if (value == 8) {
+                return new Action("right_a_bit");
+            } else {
+                return new Action("stop");
+            }
+        }
 	}
 
 	//Implements cloneable so when access to the arraylist is outside of this thread
@@ -125,6 +164,36 @@ public class BluetoothRobot implements Runnable
 		private BeliefStates type;
 		private RobotAction[] actions;
 		private int onAppeared;
+
+        private Plan agentPlan;
+
+        @Override
+        public boolean equals(Object o) {
+            if (o instanceof RobotRule) {
+                RobotRule r = (RobotRule) o;
+                if (type != r.getType()) {
+                    return false;
+                }
+
+                if (onAppeared != r.getOnAppeared()) {
+                    return false;
+                }
+
+                if (on != r.getEnabled()) {
+                    return false;
+                }
+
+                int i = 0;
+                for (RobotAction a : actions) {
+                    if (a != r.getAction(i)) {
+                        return false;
+                    }
+                    i++;
+                }
+                return true;
+            }
+            return false;
+        }
 
 		public RobotRule()
 		{
@@ -161,6 +230,14 @@ public class BluetoothRobot implements Runnable
 		{
 			return type;
 		}
+
+        public void setPlan(Plan p) {
+            agentPlan = p;
+        }
+
+        public Plan getPlan() {
+            return agentPlan;
+        }
 	}
 
     private Robot abstraction_engine;
@@ -457,7 +534,7 @@ public class BluetoothRobot implements Runnable
 				switch(mode)
 				{
 					case MANUAL:
-						checkRules();
+						// checkRules();
 						doAction();
 						break;
 					case LINE:
@@ -591,7 +668,16 @@ public class BluetoothRobot implements Runnable
 
 	public void changedRule(int pos, RobotRule rule)
 	{
-		rules[pos] = rule;
+        if (! (rules[pos].equals(rule))) {
+            RobotRule oldrule = rules[pos];
+            if (oldrule.getEnabled()) {
+                removePlan(oldrule);
+            }
+            rules[pos] = rule;
+            if (rule.getEnabled()) {
+                addPlan(rule);
+            }
+        }
 	}
 
 	public BeliefSet getBeliefSet()
@@ -632,4 +718,35 @@ public class BluetoothRobot implements Runnable
 	{
 		return state.colour;
 	}
+
+    public void addPlan(RobotRule r) {
+        Plan p = new Plan();
+        if (r.getOnAppeared() == 0) {
+            p.setTrigger(new Event(Event.AILAddition, Event.AILBel, r.getType().toLiteral()));
+        } else {
+            p.setTrigger(new Event(Event.AILDeletion, Event.AILBel, r.getType().toLiteral()));
+        }
+
+        p.setContextSingle(new Guard(), 3);
+        ArrayList<Deed> deeds = new ArrayList<Deed>();
+        deeds.add(new Deed(r.getAction(2).toAILAction()));
+        deeds.add(new Deed(r.getAction(1).toAILAction()));
+        deeds.add(new Deed(r.getAction(0).toAILAction()));
+        p.setBody(deeds);
+
+        p.setPrefix(new ArrayList<Deed>());
+
+        try {
+            reasoningengine.addPlan(p);
+        } catch (Exception e) {
+
+        }
+
+        r.setPlan(p);
+
+    }
+
+    public void removePlan(RobotRule r) {
+        reasoningengine.removePlan(r.getPlan());
+    }
 }
