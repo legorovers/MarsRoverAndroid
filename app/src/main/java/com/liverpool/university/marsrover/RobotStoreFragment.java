@@ -7,6 +7,8 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 
+import eass.semantics.EASSAgent;
+
 import EV3.BluetoothRobot;
 
 /**
@@ -65,6 +67,10 @@ public class RobotStoreFragment extends Fragment
 	public BluetoothRobot.BeliefSet getBeliefSet()
 	{
 		return btRobot.getBeliefSet();
+	}
+
+	public EASSAgent getReasoningEngine() {
+		return btRobot.getReasoningEngine();
 	}
 
 	public Exception getConnectionException()

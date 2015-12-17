@@ -22,6 +22,11 @@ import android.widget.TextView;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
+import java.util.List;
+
+
+import ail.syntax.Literal;
+import eass.semantics.EASSAgent;
 
 import EV3.BluetoothRobot;
 
@@ -43,6 +48,7 @@ public class NavigationPageFrag extends BaseBluetoothFragment implements Adapter
 			if (getView() != null)
 			{
 				BluetoothRobot.BeliefSet currentBeliefs = btEvents.getBelief();
+				// List<Literal> currentBeliefs = BluetoothRobot.getBeliefs();
 
 				((TextView) getView().findViewById(R.id.txtNDistance)).setText(String.format("Distance - %f", currentBeliefs.distance));
 				((TextView) getView().findViewById(R.id.txtNColour)).setText(String.format("RGB - %d %d %d", Color.red(currentBeliefs.colour)
@@ -51,13 +57,16 @@ public class NavigationPageFrag extends BaseBluetoothFragment implements Adapter
 
 				beliefSet.setLength(0);
 				beliefSet.append("Beliefs - [");
-				for (int i = 0; i < currentBeliefs.states.size(); i++)
+				boolean start = true;
+				for (Literal l: getReasoningEngine().getBB().getAll())
 				{
-					if (i > 0)
+					if (!start)
 					{
 						beliefSet.append(", ");
+					} else {
+						start = false;
 					}
-					beliefSet.append(currentBeliefs.states.get(i).toString());
+					beliefSet.append(l.toString());
 				}
 				beliefSet.append("]");
 				((TextView) getView().findViewById(R.id.txtNBeliefs)).setText(beliefSet.toString());
@@ -190,6 +199,10 @@ public class NavigationPageFrag extends BaseBluetoothFragment implements Adapter
 	public void onNothingSelected(AdapterView<?> parent)
 	{
 
+	}
+
+	public EASSAgent getReasoningEngine() {
+		return btEvents.getReasoningEngine();
 	}
 
 	public void doUpdates(boolean update)

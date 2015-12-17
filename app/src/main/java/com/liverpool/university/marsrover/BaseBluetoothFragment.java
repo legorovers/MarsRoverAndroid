@@ -3,6 +3,8 @@ package com.liverpool.university.marsrover;
 import android.app.Activity;
 import android.support.v4.app.Fragment;
 
+import eass.semantics.EASSAgent;
+
 import EV3.BluetoothRobot;
 
 /**
@@ -19,6 +21,7 @@ public class BaseBluetoothFragment extends Fragment
 		int getFoundColour();
 		BluetoothRobot.BeliefSet getBelief();
 		BluetoothRobot.ConnectStatus getConnectionStatus();
+		EASSAgent getReasoningEngine();
 		void setConnection(boolean doConnect);
 		String getConnectionMessages();
 		Exception getConnectionException();

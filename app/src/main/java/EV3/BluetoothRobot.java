@@ -11,6 +11,7 @@ import java.util.Random;
 import java.util.concurrent.LinkedBlockingDeque;
 
 import ail.mas.MAS;
+import ail.syntax.Literal;
 import ail.util.AILexception;
 import eass.semantics.EASSAgent;
 
@@ -190,6 +191,7 @@ public class BluetoothRobot implements Runnable
 	private long untilAction = 0;
 
     EASSEV3Environment env = new EASSEV3Environment();
+    EASSAgent reasoningengine;
 
 	private void updateBeliefs(float distance, int colour)
 	{
@@ -199,6 +201,8 @@ public class BluetoothRobot implements Runnable
 			if (!state.states.contains(BeliefStates.OBSTACLE))
 			{
 				state.states.add(BeliefStates.OBSTACLE);
+                env.addSharedBelief("robot", new Literal("obstacle"));
+
 			}
 		}
 		else
@@ -206,6 +210,7 @@ public class BluetoothRobot implements Runnable
 			if (state.states.contains(BeliefStates.OBSTACLE))
 			{
 				state.states.remove(BeliefStates.OBSTACLE);
+                env.removeSharedBelief("robot", new Literal("obstacle"));
 			}
 		}
 		obstacleChanged = curObs != state.states.contains(BeliefStates.OBSTACLE);
@@ -219,6 +224,7 @@ public class BluetoothRobot implements Runnable
 			if (!state.states.contains(BeliefStates.PATH))
 			{
 				state.states.add(BeliefStates.PATH);
+                env.addSharedBelief("robot", new Literal("path"));
 			}
 		}
 		else
@@ -226,6 +232,7 @@ public class BluetoothRobot implements Runnable
 			if (state.states.contains(BeliefStates.PATH))
 			{
 				state.states.remove(BeliefStates.PATH);
+                env.removeSharedBelief("robot", new Literal("path"));
 			}
 		}
 		pathChanged = curPath != state.states.contains(BeliefStates.PATH);
@@ -236,6 +243,7 @@ public class BluetoothRobot implements Runnable
 			if (!state.states.contains(BeliefStates.WATER))
 			{
 				state.states.add(BeliefStates.WATER);
+                env.addSharedBelief("robot", new Literal("water"));
 			}
 		}
 		else
@@ -243,6 +251,7 @@ public class BluetoothRobot implements Runnable
 			if (state.states.contains(BeliefStates.WATER))
 			{
 				state.states.remove(BeliefStates.WATER);
+                env.removeSharedBelief("robot", new Literal("water"));
 			}
 		}
 		waterChanged = curWater != state.states.contains(BeliefStates.WATER);
@@ -410,6 +419,10 @@ public class BluetoothRobot implements Runnable
 		}
 	}
 
+    public ArrayList<Literal> getBeliefs() {
+        return reasoningengine.getBB().getAll();
+    }
+
     @Override
     public void run()
     {
@@ -425,8 +438,8 @@ public class BluetoothRobot implements Runnable
 			//While connected or no signal to disconnect
 			while (status == ConnectStatus.CONNECTED)
 			{
-                env.eachrun();
-                reasoning_engine.reason();
+               //  env.eachrun();
+                // reasoningengine.reason();
 				disInput = abstraction_engine.getuSensor().getSample();
 				float[] rgb = abstraction_engine.getRGBSensor().getRGBSample();
 				//Log.w("Colour Values", "R - " + (int) (rgb[0] * 850) + " G - " + (int) (rgb[1] * 1026) + " B - " + (int) (rgb[2] * 1815));
@@ -497,13 +510,12 @@ public class BluetoothRobot implements Runnable
 
         MAS mas = new MAS();
         mas.setEnv(env);
-        EASSAgent agent = null;
         try {
-            agent = new EASSAgent("robot");
+            reasoningengine = new EASSAgent("robot");
         } catch (AILexception aiLexception) {
             aiLexception.printStackTrace();
         }
-        mas.addAg(agent);
+        mas.addAg(reasoningengine);
 
         env.addRobot("robot", abstraction_engine);
 	}
@@ -514,6 +526,10 @@ public class BluetoothRobot implements Runnable
 			actions.add(new Pair<RobotAction, Long>(action, SystemClock.uptimeMillis()));
 		}
 	}
+
+    public EASSAgent getReasoningEngine() {
+        return reasoningengine;
+    }
 
 	public RobotRule[] getAllRules()
 	{
