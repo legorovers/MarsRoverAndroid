@@ -64,7 +64,7 @@ public class RobotStoreFragment extends Fragment
 
 	public BluetoothRobot.BeliefSet getBeliefSet()
 	{
-		return btRobot.getBeliefSet();
+	 	return btRobot.getBeliefSet();
 	}
 
 	public Exception getConnectionException()
