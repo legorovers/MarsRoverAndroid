@@ -10,6 +10,10 @@ import java.util.ArrayList;
 import java.util.Random;
 import java.util.concurrent.LinkedBlockingDeque;
 
+import ail.mas.MAS;
+import ail.util.AILexception;
+import eass.semantics.EASSAgent;
+
 /**
  * Thread that manages the connection to the EV3, also manages Beliefs, Rules and actions
  *
@@ -184,6 +188,8 @@ public class BluetoothRobot implements Runnable
 	private int speed = 10;
 	private long delay = 0;
 	private long untilAction = 0;
+
+    EASSEV3Environment env = new EASSEV3Environment();
 
 	private void updateBeliefs(float distance, int colour)
 	{
@@ -419,6 +425,8 @@ public class BluetoothRobot implements Runnable
 			//While connected or no signal to disconnect
 			while (status == ConnectStatus.CONNECTED)
 			{
+                env.eachrun();
+                reasoning_engine.reason();
 				disInput = abstraction_engine.getuSensor().getSample();
 				float[] rgb = abstraction_engine.getRGBSensor().getRGBSample();
 				//Log.w("Colour Values", "R - " + (int) (rgb[0] * 850) + " G - " + (int) (rgb[1] * 1026) + " B - " + (int) (rgb[2] * 1815));
@@ -485,6 +493,19 @@ public class BluetoothRobot implements Runnable
 		abstraction_engine = new Robot();
 		mode = RobotMode.MANUAL;
 		running = false;
+
+
+        MAS mas = new MAS();
+        mas.setEnv(env);
+        EASSAgent agent = null;
+        try {
+            agent = new EASSAgent("robot");
+        } catch (AILexception aiLexception) {
+            aiLexception.printStackTrace();
+        }
+        mas.addAg(agent);
+
+        env.addRobot("robot", abstraction_engine);
 	}
 
 	public void addAction(RobotAction action, boolean mustprocess)
