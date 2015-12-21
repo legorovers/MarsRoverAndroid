@@ -524,7 +524,7 @@ public class BluetoothRobot implements Runnable
 			while (status == ConnectStatus.CONNECTED)
 			{
                 // env.eachrun();
-                for (int i = 0; i < 10; i++) {
+                for (int i = 0; i < 20; i++) {
                     reasoningengine.reason();
                 }
 
@@ -745,7 +745,9 @@ public class BluetoothRobot implements Runnable
         deeds.add(new Deed(r.getAction(0).toAILAction()));
         p.setBody(deeds);
 
-        p.setPrefix(new ArrayList<Deed>());
+		ArrayList<Deed> prefix = new ArrayList<Deed>();
+		prefix.add(new Deed(Deed.Dnpy));
+		p.setPrefix(prefix);
 
         try {
             reasoningengine.addPlan(p);
