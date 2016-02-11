@@ -137,4 +137,8 @@ public class RobotStoreFragment extends Fragment
 	{
 		return btRobot.getColourFound();
 	}
+
+	public void setChanged(boolean education_set) {
+		btRobot.setChanged(education_set);
+	}
 }

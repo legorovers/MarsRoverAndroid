@@ -14,7 +14,8 @@ public class Robot extends BasicRobot
     RemoteRequestRegulatedMotor motor;
     RemoteRequestPilot pilot;
 
-	EASSUltrasonicSensor uSensor;
+	EASSInfraRedSensor irSensor;
+    EASSUltrasonicSensor uSensor;
 	EASSRGBColorSensor cSensor;
 
     private StringBuilder messages;
@@ -22,12 +23,14 @@ public class Robot extends BasicRobot
     private boolean closed = false;
     private boolean straight = false;
 
-    int ultra_port = 2;
+    int distance_port = 2;
     int color_port = 3;
 
     int slow_turn = 70;
     int fast_turn = 80;
     int travel_speed = 10;
+
+    boolean home_edition = false;
 
     public Robot()
     {
@@ -43,14 +46,21 @@ public class Robot extends BasicRobot
         RemoteRequestEV3 brick = getBrick();
 
 
-        String ultra_portstring = "S" + ultra_port;
+        String distance_portstring = "S" + distance_port;
         String color_portstring = "S" + color_port;
 
         try {
-            messages.append("Connecting to Ultrasonic Sensor" + '\n');
-            uSensor = new EASSUltrasonicSensor(brick, ultra_portstring);
-            messages.append("Connected to Sensor " + '\n');
-            setSensor(ultra_port, uSensor);
+            if (home_edition) {
+                messages.append("Connecting to Infra Red Sensor" + '\n');
+                irSensor = new EASSInfraRedSensor(brick, distance_portstring);
+                messages.append("Connected to Sensor " + '\n');
+                setSensor(distance_port, irSensor);
+            } else {
+                messages.append("Connecting to Ultrasonic Sensor" + '\n');
+                uSensor = new EASSUltrasonicSensor(brick, distance_portstring);
+                messages.append("Connected to Sensor " + '\n');
+                setSensor(distance_port, uSensor);
+            }
         } catch (Exception e) {
             brick.disConnect();
             throw e;
@@ -75,16 +85,24 @@ public class Robot extends BasicRobot
             motorL = (RemoteRequestRegulatedMotor) brick.createRegulatedMotor("C", 'L');
             motorR.setSpeed(200);
             motorL.setSpeed(200);
-            pilot = (RemoteRequestPilot) brick.createPilot(7, 20, "C", "B " + '\n');
+            if (home_edition) {
+                pilot = (RemoteRequestPilot) brick.createPilot(4, 9, "C", "B " + '\n');
+            } else {
+                pilot = (RemoteRequestPilot) brick.createPilot(6, 10, "C", "B" + '\n');
+            }
             messages.append("Created Pilot " + '\n');
         } catch (Exception e) {
-            uSensor.close();
+            if (home_edition) {
+                irSensor.close();
+            } else {
+                uSensor.close();
+            }
             cSensor.close();
             brick.disConnect();
             throw e;
         }
 
-        try {
+        /* try {
             messages.append("Contacting Medium Motor " + '\n');
             motor = (RemoteRequestRegulatedMotor) brick.createRegulatedMotor("A", 'M');
             messages.append("Created Medium Motor " + '\n');
@@ -95,7 +113,7 @@ public class Robot extends BasicRobot
             motorL.close();
             brick.disConnect();
             throw e;
-        }
+        } */
     }
 
     public void close() {
@@ -287,10 +305,28 @@ public class Robot extends BasicRobot
         return cSensor;
     }
 
-	public EASSUltrasonicSensor getuSensor()
+	public EASSInfraRedSensor getirSensor()
 	{
-		return uSensor;
+		return irSensor;
 	}
+
+    public EASSUltrasonicSensor getusSensor()
+    {
+        return uSensor;
+    }
+
+    public boolean isHome_edition() {
+        return home_edition;
+
+    }
+
+    public void setChanged(boolean education_set) {
+        if (education_set) {
+            home_edition = false;
+        } else {
+            home_edition = true;
+        }
+    }
 
 	public String getMessages()
 	{

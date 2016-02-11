@@ -311,4 +311,8 @@ public class MainPage extends AppCompatActivity implements BaseBluetoothFragment
 	{
 		return robotStore.getRunning();
 	}
+
+	public void setChanged(boolean education_set) {
+		robotStore.setChanged(education_set);
+	}
 }

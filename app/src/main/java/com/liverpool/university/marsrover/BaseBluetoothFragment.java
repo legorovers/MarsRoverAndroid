@@ -32,6 +32,7 @@ public class BaseBluetoothFragment extends Fragment
 		long getTimeTil();
 		boolean getRunning();
 		void settingsChanged(float obstacle, int blackMax, int waterMax);
+		void setChanged(boolean b);
 	}
 
 	protected BTEvents btEvents;

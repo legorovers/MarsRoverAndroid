@@ -14,6 +14,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -144,6 +146,18 @@ public class ConnectPageFragment extends BaseBluetoothFragment implements View.O
 		{
 			((Button)view.findViewById(R.id.cmdConnect)).setText("Connect");
 		}
+
+
+		((CheckBox)view.findViewById(R.id.checkBoxSet)).setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+			@Override
+			public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+				if (b) {
+					btEvents.setChanged(true);
+				} else {
+					btEvents.setChanged(false);
+				}
+			}
+		});
 		return view;
 	}
 

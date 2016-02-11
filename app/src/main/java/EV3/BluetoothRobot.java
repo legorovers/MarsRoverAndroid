@@ -528,7 +528,12 @@ public class BluetoothRobot implements Runnable
                     reasoningengine.reason();
                 }
 
-                disInput = abstraction_engine.getuSensor().getSample();
+				if (abstraction_engine.isHome_edition()) {
+					disInput = abstraction_engine.getirSensor().getSample();
+                    disInput = disInput/100;
+				} else {
+					disInput = abstraction_engine.getusSensor().getSample();
+				}
 				float[] rgb = abstraction_engine.getRGBSensor().getRGBSample();
 				//Log.w("Colour Values", "R - " + (int) (rgb[0] * 850) + " G - " + (int) (rgb[1] * 1026) + " B - " + (int) (rgb[2] * 1815));
 				state.colour = Color.rgb((int)(rgb[0] * 850), (int)(rgb[1] * 1026), (int)(rgb[2] * 1815));
@@ -759,5 +764,9 @@ public class BluetoothRobot implements Runnable
 
     public void removePlan(RobotRule r) {
         reasoningengine.removePlan(r.getPlan());
+    }
+
+    public void setChanged(boolean education_set) {
+        abstraction_engine.setChanged(education_set);
     }
 }

@@ -115,13 +115,32 @@
             android:maxLength="3"/>
     </LinearLayout>
 
-    <Button
+    <TableLayout
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Disconnect"
-        android:id="@+id/cmdConnect"
-        android:layout_gravity="center_horizontal"
-        />
+        android:layout_height="wrap_content">
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Disconnect"
+                android:id="@+id/cmdConnect"
+                android:layout_gravity="left|center_horizontal"
+                android:layout_column="4" />
+
+            <CheckBox
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Education Set "
+                android:id="@+id/checkBoxSet"
+                android:layout_gravity="right"
+                android:checked="true"
+                android:layout_column="14" />
+        </TableRow>
+    </TableLayout>
 
     <FrameLayout
         android:layout_width="match_parent"
