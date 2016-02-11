@@ -149,7 +149,7 @@ public class Robot extends BasicRobot
      * Move forward
      */
     public void forward() {
-        pilot.setTravelSpeed(travel_speed);
+        pilot.setLinearSpeed(travel_speed);
         if (!straight) {
             straight = true;
         }
@@ -161,7 +161,7 @@ public class Robot extends BasicRobot
      * Move forward a short distance.
      */
     public void short_forward() {
-        pilot.setTravelSpeed(travel_speed);
+        pilot.setLinearSpeed(travel_speed);
         if (!straight) {
             straight = true;
         }
@@ -174,7 +174,7 @@ public class Robot extends BasicRobot
      * Move backward
      */
     public void backward() {
-        pilot.setTravelSpeed(travel_speed);
+        pilot.setLinearSpeed(travel_speed);
         if (!straight) {
             straight = true;
         }
@@ -185,7 +185,7 @@ public class Robot extends BasicRobot
      * Move backward a short distance.
      */
     public void short_backward() {
-        pilot.setTravelSpeed(travel_speed);
+        pilot.setLinearSpeed(travel_speed);
         if (!straight) {
             straight = true;
         }
@@ -214,7 +214,7 @@ public class Robot extends BasicRobot
      * Turn left through an angle (approx 90 on the wheeled robots).
      */
     public void short_left() {
-        pilot.setRotateSpeed(travel_speed);
+        pilot.setAngularSpeed(travel_speed);
         pilot.rotate(-90);
         straight = false;
     }
@@ -244,7 +244,7 @@ public class Robot extends BasicRobot
      * Turn a short distance right (approx 90 on a wheeled robot)
      */
     public void short_right() {
-        pilot.setRotateSpeed(travel_speed);
+        pilot.setAngularSpeed(travel_speed);
         pilot.rotate(90);
         straight = false;
     }
