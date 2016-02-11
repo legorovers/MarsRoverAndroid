@@ -43,4 +43,8 @@ public class BaseBluetoothFragment extends Fragment
 		super.onAttach(activity);
 		btEvents = (BTEvents)activity;
 	}
+
+	public EASSAgent getReasoningEngine() {
+		return btEvents.getReasoningEngine();
+	}
 }

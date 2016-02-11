@@ -14,6 +14,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import EV3.BluetoothRobot;
+import ail.syntax.Literal;
 
 /**
  * Fragment where demonstrations are shown
@@ -39,13 +40,16 @@ public class TaskPageFragment extends BaseBluetoothFragment implements AdapterVi
 
 				beliefSet.setLength(0);
 				beliefSet.append("Beliefs - [");
-				for (int i = 0; i < currentBeliefs.states.size(); i++)
+				boolean start = true;
+				for (Literal l: getReasoningEngine().getBB().getAll())
 				{
-					if (i > 0)
+					if (!start)
 					{
 						beliefSet.append(", ");
+					} else {
+						start = false;
 					}
-					beliefSet.append(currentBeliefs.states.get(i).toString());
+					beliefSet.append(l.toString());
 				}
 				beliefSet.append("]");
 				((TextView) getView().findViewById(R.id.txtBeliefs)).setText(beliefSet.toString());

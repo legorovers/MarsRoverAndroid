@@ -201,10 +201,6 @@ public class NavigationPageFrag extends BaseBluetoothFragment implements Adapter
 
 	}
 
-	public EASSAgent getReasoningEngine() {
-		return btEvents.getReasoningEngine();
-	}
-
 	public void doUpdates(boolean update)
 	{
 		if (!update)
