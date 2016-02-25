@@ -24,8 +24,10 @@ package EV3;
 //----------------------------------------------------------------------------
 
 import java.util.HashMap;
+import java.util.Set;
 
 import ail.syntax.Action;
+import ail.syntax.Predicate;
 import ail.syntax.Unifier;
 import ail.util.AILexception;
 import eass.mas.DefaultEASSEnvironment;
@@ -186,9 +188,7 @@ public class EASSEV3Environment extends DefaultEASSEnvironment {
 	public boolean done() {
 		return super.done;
 	}
-	  
 	
-
 }
 
 

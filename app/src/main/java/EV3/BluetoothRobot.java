@@ -9,6 +9,8 @@ import android.util.Pair;
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.concurrent.LinkedBlockingDeque;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import ail.mas.MAS;
 import ail.syntax.Action;
@@ -340,10 +342,11 @@ public class BluetoothRobot implements Runnable
 			}
 		}
 		waterChanged = curWater != state.states.contains(BeliefStates.WATER);
+		// System.err.println("current beliefs are: " + env.getPercepts("robot", false));
 
 	}
 
-	private void checkRules()
+	/* private void checkRules()
 	{
 		for (int i = 0; i < rules.length; i++)
 		{
@@ -375,7 +378,7 @@ public class BluetoothRobot implements Runnable
 				}
 			}
 		}
-	}
+	} */
 
 	private void doAction()
 	{
@@ -526,6 +529,7 @@ public class BluetoothRobot implements Runnable
                 // env.eachrun();
                 for (int i = 0; i < 10; i++) {
                     reasoningengine.reason();
+                    // System.err.println(reasoningengine);
                 }
 
 				if (abstraction_engine.isHome_edition()) {
@@ -750,10 +754,14 @@ public class BluetoothRobot implements Runnable
         deeds.add(new Deed(r.getAction(0).toAILAction()));
         p.setBody(deeds);
 
-        p.setPrefix(new ArrayList<Deed>());
+        ArrayList<Deed> prefix = new ArrayList<Deed>();
+        prefix.add(new Deed(Deed.Dnpy));
+
+        p.setPrefix(prefix);
 
         try {
             reasoningengine.addPlan(p);
+            System.err.println(reasoningengine.getPL());
         } catch (Exception e) {
 
         }
