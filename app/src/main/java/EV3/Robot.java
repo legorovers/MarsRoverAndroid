@@ -337,4 +337,12 @@ public class Robot extends BasicRobot
 	{
 		return pilot.isMoving();
 	}
+
+    public boolean isMovingStraight() {
+        return pilot.isMoving() && straight;
+    }
+
+    public boolean isTurning() {
+        return pilot.isMoving() && !straight;
+    }
 }

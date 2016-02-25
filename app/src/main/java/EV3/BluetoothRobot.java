@@ -436,15 +436,15 @@ public class BluetoothRobot implements Runnable
 		{
 			if (state.states.contains(BeliefStates.OBSTACLE))
 			{
-				abstraction_engine.stop();
-				abstraction_engine.short_left();
+                if (! abstraction_engine.isTurning()) {
+                    abstraction_engine.left();
+                }
 			}
 			else
 			{
-				if (!abstraction_engine.isMoving())
-				{
-					abstraction_engine.forward();
-				}
+                if (! abstraction_engine.isMovingStraight()) {
+                    abstraction_engine.forward();
+                }
 			}
 		}
 		else
