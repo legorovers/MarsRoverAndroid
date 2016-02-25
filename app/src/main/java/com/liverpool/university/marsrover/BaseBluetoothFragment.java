@@ -33,6 +33,7 @@ public class BaseBluetoothFragment extends Fragment
 		boolean getRunning();
 		void settingsChanged(float obstacle, int blackMax, int waterMax);
 		void setChanged(boolean b);
+		String getName();
 	}
 
 	protected BTEvents btEvents;

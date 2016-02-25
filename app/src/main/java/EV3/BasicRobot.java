@@ -45,6 +45,7 @@ public class BasicRobot implements LegoRobot
 	boolean haspilot = false;
 	protected boolean disconnected = false;
 	boolean connected = false;
+    String brickname;
 	
 	EASSSensor sensor1;
 	EASSSensor sensor2;
@@ -190,6 +191,10 @@ public class BasicRobot implements LegoRobot
 	{
 		return connected;
 	}
-		
+
+	@Override
+	public String getName() {
+		return brickname;
+	}
 
 }

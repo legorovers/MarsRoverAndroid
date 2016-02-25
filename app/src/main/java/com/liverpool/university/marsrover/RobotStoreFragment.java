@@ -141,4 +141,6 @@ public class RobotStoreFragment extends Fragment
 	public void setChanged(boolean education_set) {
 		btRobot.setChanged(education_set);
 	}
+
+	public String getName() { return btRobot.getName(); }
 }

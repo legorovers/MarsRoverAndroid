@@ -777,4 +777,8 @@ public class BluetoothRobot implements Runnable
     public void setChanged(boolean education_set) {
         abstraction_engine.setChanged(education_set);
     }
+
+    public String getName() {
+        return abstraction_engine.getName();
+    }
 }

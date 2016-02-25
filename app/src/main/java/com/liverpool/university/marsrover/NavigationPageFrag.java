@@ -73,6 +73,8 @@ public class NavigationPageFrag extends BaseBluetoothFragment implements Adapter
 				time = btEvents.getTimeTil();
 				String formatStr = new SimpleDateFormat("mm:ss", Locale.ENGLISH).format(time);
 				((TextView) getView().findViewById(R.id.txtTimeTil)).setText("Time until next action - " + formatStr);
+				String nameStr = btEvents.getName();
+				((TextView) getView().findViewById(R.id.txtRobotName)).setText("Connected to " + nameStr);
 			}
 			beliefHandle.postDelayed(getBeliefSet, 100);
 		}

@@ -102,6 +102,8 @@ public class Robot extends BasicRobot
             throw e;
         }
 
+        String s1 = brick.getName();
+
         /* try {
             messages.append("Contacting Medium Motor " + '\n');
             motor = (RemoteRequestRegulatedMotor) brick.createRegulatedMotor("A", 'M');

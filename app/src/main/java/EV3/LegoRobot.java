@@ -61,5 +61,11 @@ public interface LegoRobot {
 	 * Close sockets and clean up.
 	 */
 	public void close();
+
+	/**
+	 * Get the name of the robot from LeJOS.
+	 * @return
+	 */
+	public String getName();
 	
 }
