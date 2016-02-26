@@ -87,7 +87,9 @@ public class BluetoothRobot implements Runnable
 		LEFT_A_BIT(6),
 		RIGHT(7),
 		RIGHT_A_BIT(8),
-		STOP(9);
+		STOP(9),
+		ARC_LEFT(10),
+		ARC_RIGHT(11);
 
 
 		static RobotAction[] a = RobotAction.values();
@@ -134,8 +136,12 @@ public class BluetoothRobot implements Runnable
             } else if (value == 7) {
                 return new Action("right");
             } else if (value == 8) {
-                return new Action("right_a_bit");
-            } else {
+				return new Action("right_a_bit");
+			} else if (value == 10) {
+				return new Action("forward_left");
+            } else if (value == 11) {
+				return new Action("forward_right");
+			} else {
                 return new Action("stop");
             }
         }

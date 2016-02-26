@@ -46,6 +46,8 @@
         <item>Right</item>
         <item>Right 90°</item>
         <item>Stop</item>
+        <item>Arc Left</item>
+        <item>Arc Right</item>
     </string-array>
 
     <string-array name="rule_type_options">

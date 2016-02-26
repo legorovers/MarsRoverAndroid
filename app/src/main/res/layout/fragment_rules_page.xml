@@ -101,7 +101,8 @@
                     android:id="@+id/cboType"
                     android:layout_weight="1"
                     android:entries="@array/rule_type"
-                    android:spinnerMode="dropdown"/>
+                    android:spinnerMode="dropdown"
+                    android:focusable="true" />
             </LinearLayout>
 
             <LinearLayout

@@ -174,6 +174,10 @@ public class EASSEV3Environment extends DefaultEASSEnvironment {
 			((Robot) robots.get(agName)).short_right();
 		} else if (act.getFunctor().equals("stop")){
 			((Robot) robots.get(agName)).stop();
+		} else if (act.getFunctor().equals("forward_right")) {
+			((Robot) robots.get(agName)).forward_right();
+		} else if (act.getFunctor().equals("forward_left")) {
+			((Robot) robots.get(agName)).forward_left();
 		}
 
 		return u;
