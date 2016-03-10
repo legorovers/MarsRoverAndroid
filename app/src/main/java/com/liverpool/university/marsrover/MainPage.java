@@ -77,6 +77,7 @@ public class MainPage extends AppCompatActivity implements BaseBluetoothFragment
 				ft = ft.replace(R.id.mainLayout, connectPage);
 				break;
 			case "Rules":
+				robotStore.setMode(BluetoothRobot.RobotMode.MANUAL);
 				ft = ft.replace(R.id.mainLayout, rulesPage);
 				break;
 			case "Tasks":
@@ -218,12 +219,6 @@ public class MainPage extends AppCompatActivity implements BaseBluetoothFragment
 	 */
 
 	@Override
-	public void settingsChanged(float obstacle, int blackMax, int waterMax)
-	{
-		robotStore.setSettings(obstacle, blackMax, waterMax);
-	}
-
-	@Override
 	public void ruleChanged(int pos, BluetoothRobot.RobotRule rule)
 	{
 		robotStore.setRule(pos, rule);
@@ -310,6 +305,11 @@ public class MainPage extends AppCompatActivity implements BaseBluetoothFragment
 	public boolean getRunning()
 	{
 		return robotStore.getRunning();
+	}
+
+	@Override
+	public void settingsChanged(float obstacle, int blackMax, int waterMin, int waterMax, int waterNBMax) {
+		robotStore.setSettings(obstacle, blackMax, waterMin, waterMax, waterNBMax);
 	}
 
 	public void setChanged(boolean education_set) {

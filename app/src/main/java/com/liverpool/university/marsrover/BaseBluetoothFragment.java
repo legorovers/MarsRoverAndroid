@@ -31,7 +31,7 @@ public class BaseBluetoothFragment extends Fragment
 		void updateNavSettings(long delayMills, int speed);
 		long getTimeTil();
 		boolean getRunning();
-		void settingsChanged(float obstacle, int blackMax, int waterMax);
+		void settingsChanged(float obstacle, int blackMax, int waterMin, int waterMax, int waterNBMax);
 		void setChanged(boolean b);
 	}
 

@@ -27,12 +27,16 @@ public class SettingsPageFragment extends BaseBluetoothFragment implements View.
 		SharedPreferences.Editor editor = prefs.edit();
 		editor.putFloat("Obstacle", Float.parseFloat(((TextView)getView().findViewById(R.id.txtObs)).getText().toString()));
 		editor.putInt("bMax", Integer.parseInt(((TextView) getView().findViewById(R.id.txtBlackMax)).getText().toString()));
+		editor.putInt("wMin", Integer.parseInt(((TextView) getView().findViewById(R.id.txtWaterMin)).getText().toString()));
 		editor.putInt("wMax", Integer.parseInt(((TextView) getView().findViewById(R.id.txtWaterMax)).getText().toString()));
+		editor.putInt("wNBMax", Integer.parseInt(((TextView) getView().findViewById(R.id.txtWaterNBMax)).getText().toString()));
 		editor.commit();
 
 		btEvents.settingsChanged(Float.parseFloat(((TextView) getView().findViewById(R.id.txtObs)).getText().toString())
 				, Integer.parseInt(((TextView) getView().findViewById(R.id.txtBlackMax)).getText().toString())
-				, Integer.parseInt(((TextView) getView().findViewById(R.id.txtWaterMax)).getText().toString()));
+				, Integer.parseInt(((TextView) getView().findViewById(R.id.txtWaterMin)).getText().toString())
+				, Integer.parseInt(((TextView) getView().findViewById(R.id.txtWaterMax)).getText().toString())
+				, Integer.parseInt(((TextView) getView().findViewById(R.id.txtWaterNBMax)).getText().toString()));
 
 		Toast saved = Toast.makeText(getView().getContext(), "Settings Saved", Toast.LENGTH_SHORT);
 		saved.show();
@@ -48,7 +52,9 @@ public class SettingsPageFragment extends BaseBluetoothFragment implements View.
 		SharedPreferences prefs = getActivity().getSharedPreferences("Settings", Context.MODE_PRIVATE);
 		((TextView)view.findViewById(R.id.txtObs)).setText(String.valueOf(prefs.getFloat("Obstacle", 0.4f)));
 		((TextView)view.findViewById(R.id.txtBlackMax)).setText(String.valueOf(prefs.getInt("bMax", 50)));
+		((TextView)view.findViewById(R.id.txtWaterMin)).setText(String.valueOf(prefs.getInt("wMin", 50)));
 		((TextView)view.findViewById(R.id.txtWaterMax)).setText(String.valueOf(prefs.getInt("wMax", 100)));
+		((TextView)view.findViewById(R.id.txtWaterMin)).setText(String.valueOf(prefs.getInt("wNBMax", 50)));
 
 		return view;
 	}

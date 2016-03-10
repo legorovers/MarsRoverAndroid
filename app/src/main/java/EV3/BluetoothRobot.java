@@ -267,7 +267,9 @@ public class BluetoothRobot implements Runnable
 
 	private float objectDetected = 0.4f;
 	private int blackMax = 50;
+	private int waterMin = 50;
 	private int waterMax = 100;
+	private int waterNBMax = 50;
 	private Random rTurn = new Random();
 	//private float pathLight = 0.09f;
 	//private PointF waterLightRange = new PointF(0.06f, 0.09f);
@@ -331,7 +333,7 @@ public class BluetoothRobot implements Runnable
 		pathChanged = curPath != state.states.contains(BeliefStates.PATH);
 
 		boolean curWater = state.states.contains(BeliefStates.WATER);
-		if (((blue > green) && (blue > red)) && ((red < waterMax) && (blue < waterMax) && (green < waterMax)))
+		if (((blue > green) && (blue > red)) && (blue > waterMin) && ((red < waterNBMax) && (blue < waterMax) && (green < waterNBMax)))
 		{
 			if (!state.states.contains(BeliefStates.WATER))
 			{
@@ -683,11 +685,13 @@ public class BluetoothRobot implements Runnable
 		}
 	}
 
-	public void changeSettings(float objectRange, int blackMaximum, int waterMaximum)
+	public void changeSettings(float objectRange, int blackMaximum, int waterMinimum, int waterMaximum, int waterNBMaximum)
 	{
 		objectDetected = objectRange;
 		blackMax = blackMaximum;
+		waterMin = waterMinimum;
 		waterMax = waterMaximum;
+		waterNBMax = waterNBMaximum;
 		//waterLightRange = new PointF(waterLower, waterUpper);
 		//pathLight = pathRange;
 	}

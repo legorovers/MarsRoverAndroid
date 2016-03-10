@@ -100,8 +100,32 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:text="Water Minimum (Blue)"
+            android:id="@+id/textView21"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
+
+        <EditText
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/txtWaterMin"
+            android:layout_gravity="right"
+            android:gravity="center"
+            android:inputType="number"
+            android:text="50"
+            android:clickable="true" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="Water Maximum"
+            android:text="Water Maximum (Blue)"
             android:id="@+id/textView16"/>
 
         <EditText
@@ -121,11 +145,38 @@
             android:inputType="number"/>
     </LinearLayout>
 
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Water Maximum (not Blue)"
+            android:id="@+id/textView22"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:password="false" />
+
+        <EditText
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:inputType="number"
+            android:ems="10"
+            android:id="@+id/txtWaterNBMax"
+            android:layout_gravity="right"
+            android:text="50"
+            android:gravity="center"
+            android:textAlignment="center"
+            android:clickable="true" />
+    </LinearLayout>
+
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Set"
         android:id="@+id/cmdSet"
-        android:layout_gravity="center"/>
+        android:layout_gravity="center_horizontal"/>
 
 </LinearLayout>
