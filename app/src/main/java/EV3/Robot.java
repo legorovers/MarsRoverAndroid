@@ -119,6 +119,7 @@ public class Robot extends BasicRobot
     public void close() {
 		messages.setLength(0);
         if (! closed) {
+            closed = true;
             super.disconnected = true;
             try {
                 motor.stop();

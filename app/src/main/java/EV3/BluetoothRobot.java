@@ -580,7 +580,7 @@ public class BluetoothRobot implements Runnable
 			state.states.clear();
 			state.colour = 0;
 			state.distance = 0;
-			abstraction_engine.close();
+			close();
 			status = ConnectStatus.DISCONNECTED;
 
         }
@@ -594,6 +594,10 @@ public class BluetoothRobot implements Runnable
 			status = ConnectStatus.DISCONNECTED;
             generatedException = e;
         }
+    }
+
+    public boolean isConnected() {
+        return (status == ConnectStatus.CONNECTED);
     }
 
 	public BluetoothRobot()
@@ -661,13 +665,14 @@ public class BluetoothRobot implements Runnable
 
 	public void disconnect()
 	{
-		setRunning(false);
-		status = ConnectStatus.DISCONNECTING;
+        status = ConnectStatus.DISCONNECTING;
+        setRunning(false);
+		close();
 	}
 
 	public void close()
 	{
-		if (abstraction_engine != null)
+		if (abstraction_engine != null && abstraction_engine.isConnected())
 		{
 			abstraction_engine.close();
 		}
