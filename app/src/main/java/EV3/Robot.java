@@ -17,6 +17,8 @@ public class Robot extends BasicRobot
 	EASSInfraRedSensor irSensor;
     EASSUltrasonicSensor uSensor;
 	EASSRGBColorSensor cSensor;
+    EASSRGBColorSensor rcSensor;
+    EASSRGBColorSensor lcSensor;
 
     private StringBuilder messages;
 
@@ -25,10 +27,12 @@ public class Robot extends BasicRobot
 
     int distance_port = 2;
     int color_port = 3;
+    int right_colour_port = 4;
+    int left_colour_port = 1;
 
     int slow_turn = 70;
     int fast_turn = 80;
-    int travel_speed = 10;
+    int travel_speed = 5;
 
     boolean home_edition = false;
 
@@ -48,6 +52,8 @@ public class Robot extends BasicRobot
 
         String distance_portstring = "S" + distance_port;
         String color_portstring = "S" + color_port;
+        String r_color_portstring = "S" + right_colour_port;
+        String l_color_portstring = "S" + left_colour_port;
 
         try {
             if (home_edition) {
@@ -73,10 +79,48 @@ public class Robot extends BasicRobot
             messages.append("Connected to Sensor " + '\n');
             setSensor(color_port, cSensor);
         } catch (Exception e) {
-            uSensor.close();
+            if (home_edition) {
+                irSensor.close();
+            } else {
+                uSensor.close();
+            }
             brick.disConnect();
             throw e;
         }
+
+        try {
+            messages.append("Connecting to Right Colour Sensor " + '\n');
+            rcSensor = new EASSRGBColorSensor(brick, r_color_portstring);
+            messages.append("Connected to Sensor " + '\n');
+            setSensor(right_colour_port, rcSensor);
+        } catch (Exception e) {
+            if (home_edition) {
+                irSensor.close();
+            } else {
+                uSensor.close();
+            }
+            cSensor.close();
+            brick.disConnect();
+            throw e;
+        }
+
+        try {
+            messages.append("Connecting to Left Colour Sensor " + '\n');
+            lcSensor = new EASSRGBColorSensor(brick, l_color_portstring);
+            messages.append("Connected to Sensor " + '\n');
+            setSensor(left_colour_port, lcSensor);
+        } catch (Exception e) {
+            if (home_edition) {
+                irSensor.close();
+            } else {
+                uSensor.close();
+            }
+            cSensor.close();
+            rcSensor.close();
+            brick.disConnect();
+            throw e;
+        }
+
 
         try {
             messages.append("Creating Pilot " + '\n');
@@ -98,6 +142,8 @@ public class Robot extends BasicRobot
                 uSensor.close();
             }
             cSensor.close();
+            lcSensor.close();
+            rcSensor.close();
             brick.disConnect();
             throw e;
         }
@@ -185,7 +231,7 @@ public class Robot extends BasicRobot
             straight = true;
         }
 
-        pilot.travel(10);
+        pilot.travel(2);
     }
 
 
@@ -247,6 +293,27 @@ public class Robot extends BasicRobot
         motorR.stop();
         straight = false;
     }
+
+    /**
+     * Move left around stopped wheel.
+     */
+    public void short_forward_left() {
+        pilot.setAngularSpeed(slow_turn);
+        pilot.rotate(-10);
+        pilot.travel(0.5);
+        straight = false;
+    }
+
+    /**
+     * Move left around stopped wheel.
+     */
+    public void short_forward_right() {
+        pilot.setAngularSpeed(slow_turn);
+        pilot.rotate(10);
+        pilot.travel(0.5);
+        straight = false;
+    }
+
 
     /**
      * Turn right on the spot.
@@ -315,6 +382,10 @@ public class Robot extends BasicRobot
     {
         return uSensor;
     }
+
+    public EASSRGBColorSensor getLeftRGBSensor() { return lcSensor;}
+
+    public EASSRGBColorSensor getRightRGBSensor() { return rcSensor;}
 
     public boolean isHome_edition() {
         return home_edition;

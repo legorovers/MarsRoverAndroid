@@ -480,6 +480,65 @@ public class BluetoothRobot implements Runnable
 		}
 	}
 
+	byte learning_actions = 3;
+	byte states  = 64;
+	QUtil qutil;
+	QBrain qbrain;
+	private boolean initialise_learning = true;
+	private void doLearning() {
+		if (running) {
+			float[] e = new float[4];
+			if (initialise_learning) {
+				initialise_learning = false;
+				qutil = new QUtil(states);
+				qbrain = new QBrain(learning_actions, states, qutil);
+			}
+
+			getEnvironmentVals(e);
+			byte a = qbrain.getAction(e);
+
+			switch (a) {
+				case 0:
+					abstraction_engine.short_forward();
+                    break;
+				case 1:
+					abstraction_engine.short_forward_left();
+                    break;
+				case 2:
+					abstraction_engine.short_forward_right();
+                    break;
+			}
+		} else {
+			initialise_learning = true;
+		}
+	}
+
+	public void getEnvironmentVals(float[] e) {
+		float rgb_center = abstraction_engine.getRGBSensor().getRGBSample()[0]*850;
+		float rgb_left = abstraction_engine.getLeftRGBSensor().getRGBSample()[0]*850;
+		float rgb_right = abstraction_engine.getRightRGBSensor().getRGBSample()[0]*850;
+
+		if (state.states.contains(BeliefStates.PATH)) {
+			e[0] = 0;
+		} else {
+			e[0] = 1;
+		}
+
+		if (rgb_left < blackMax) {
+			e[1] = 0;
+		} else {
+			e[1] = 1;
+		}
+
+		if (rgb_right < blackMax) {
+			e[2] = 0;
+		} else {
+			e[2] = 1;
+		}
+
+		e[3] = rgb_center;
+	}
+
 	private void doWater()
 	{
 		if (running)
@@ -572,7 +631,7 @@ public class BluetoothRobot implements Runnable
 						doAvoid();
 						break;
 					case WATER:
-						doWater();
+						doLearning();
 						break;
 				}
 			}
