@@ -37,16 +37,18 @@
 
     <string-array name="rule_options">
         <item>Nothing</item>
+        <item>Stop</item>
         <item>Forward</item>
         <item>Forward a bit</item>
-        <item>Backwards</item>
-        <item>Backwards a bit</item>
+        <item>Back</item>
+        <item>Back a bit</item>
         <item>Left</item>
+        <item>Left a bit</item>
         <item>Left 90°</item>
-        <item>Right</item>
-        <item>Right 90°</item>
-        <item>Stop</item>
         <item>Arc Left</item>
+        <item>Right</item>
+        <item>Right a bit</item>
+        <item>Right 90°</item>
         <item>Arc Right</item>
     </string-array>
 

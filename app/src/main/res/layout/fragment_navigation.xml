@@ -161,7 +161,7 @@
             <Button
                 android:layout_width="105dp"
                 android:layout_height="100dp"
-                android:text="Reverse a bit"
+                android:text="Back a bit"
                 android:id="@+id/cmdTBABit"
                 android:layout_below="@+id/cmdTStop"
                 android:layout_centerHorizontal="true"
@@ -171,7 +171,7 @@
             <Button
                 android:layout_width="105dp"
                 android:layout_height="100dp"
-                android:text="Reverse"
+                android:text="Back"
                 android:id="@+id/cmdTBack"
                 android:layout_below="@+id/cmdTBABit"
                 android:layout_centerHorizontal="true"
@@ -190,7 +190,7 @@
             <Button
                 android:layout_width="105dp"
                 android:layout_height="100dp"
-                android:text="Left 90°"
+                android:text="Left a bit"
                 android:id="@+id/cmdTLABit"
                 android:layout_alignTop="@id/cmdTStop"
                 android:layout_toStartOf="@+id/cmdTStop"
@@ -210,7 +210,7 @@
             <Button
                 android:layout_width="105dp"
                 android:layout_height="100dp"
-                android:text="Right 90°"
+                android:text="Right a bit"
                 android:id="@+id/cmdTRABit"
                 android:layout_alignTop="@id/cmdTStop"
                 android:layout_toEndOf="@+id/cmdTStop"

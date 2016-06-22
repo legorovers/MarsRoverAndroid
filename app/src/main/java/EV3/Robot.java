@@ -238,6 +238,15 @@ public class Robot extends BasicRobot
     }
 
     /**
+     * Turn left through an angle (approx 30 on the wheeled robots).
+     */
+    public void very_short_left() {
+        pilot.setAngularSpeed(travel_speed);
+        pilot.rotate(-30);
+        straight = false;
+    }
+
+    /**
      * Move left around stopped wheel.
      */
     public void forward_left() {
@@ -266,6 +275,16 @@ public class Robot extends BasicRobot
         pilot.rotate(90);
         straight = false;
     }
+
+    /**
+     * Turn a short distance right (approx 30 on a wheeled robot)
+     */
+    public void very_short_right() {
+        pilot.setAngularSpeed(travel_speed);
+        pilot.rotate(30);
+        straight = false;
+    }
+
 
 
     /**

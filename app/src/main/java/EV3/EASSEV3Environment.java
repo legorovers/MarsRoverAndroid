@@ -167,17 +167,21 @@ public class EASSEV3Environment extends DefaultEASSEnvironment {
 		} else if (act.getFunctor().equals("left")) {
 			((Robot) robots.get(agName)).left();
 		} else if (act.getFunctor().equals("left_a_bit")) {
-			((Robot) robots.get(agName)).short_left();
+			((Robot) robots.get(agName)).very_short_left();
 		} else if (act.getFunctor().equals("right")) {
 			((Robot) robots.get(agName)).right();
 		} else if (act.getFunctor().equals("right_a_bit")) {
-			((Robot) robots.get(agName)).short_right();
+			((Robot) robots.get(agName)).very_short_right();
 		} else if (act.getFunctor().equals("stop")){
 			((Robot) robots.get(agName)).stop();
 		} else if (act.getFunctor().equals("forward_right")) {
 			((Robot) robots.get(agName)).forward_right();
 		} else if (act.getFunctor().equals("forward_left")) {
 			((Robot) robots.get(agName)).forward_left();
+		} else if (act.getFunctor().equals("right_a_lot")) {
+			((Robot) robots.get(agName)).short_right();
+		} else if (act.getFunctor().equals("left_a_lot")) {
+			((Robot) robots.get(agName)).short_left();
 		}
 
 		return u;
