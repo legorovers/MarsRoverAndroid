@@ -30,7 +30,7 @@ public class Robot extends BasicRobot
     int fast_turn = 80;
     int travel_speed = 10;
 
-    boolean home_edition = false;
+    boolean home_edition = true;
 
     public Robot()
     {
