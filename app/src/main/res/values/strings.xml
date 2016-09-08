@@ -1,10 +1,10 @@
 <resources>
-    <string name="app_name">Lego Rovers (Education Edition)</string>
+    <string name="app_name">Lego Rovers (Education Set)</string>
 
     <string name="drawer_open">Open navigation drawer</string>
     <string name="drawer_close">Close navigation drawer</string>
 
-    <string name="title_activity_connect_page">Lego Rovers</string>
+    <string name="title_activity_connect_page">Lego Rovers (Education Set)</string>
 
     <string-array name="delay_items">
         <item>Instant</item>
