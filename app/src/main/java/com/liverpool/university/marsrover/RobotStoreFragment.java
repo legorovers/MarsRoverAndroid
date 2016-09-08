@@ -98,6 +98,12 @@ public class RobotStoreFragment extends Fragment
 		}
 	}
 
+	public void disconnect() {
+        if (btRobot.isConnected()) {
+            btRobot.disconnect();
+        }
+	}
+
 	public BluetoothRobot.ConnectStatus getConnectionStatus()
 	{
 		return btRobot.connectionStatus();
