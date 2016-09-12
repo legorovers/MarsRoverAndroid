@@ -1,5 +1,7 @@
 package EV3;
 
+import android.os.AsyncTask;
+import android.os.StrictMode;
 import android.os.SystemClock;
 
 import lejos.remote.ev3.RemoteRequestEV3;
@@ -32,9 +34,20 @@ public class Robot extends BasicRobot
 
     boolean home_edition = true;
 
+    StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+
+
     public Robot()
     {
 		messages = new StringBuilder();
+    }
+
+    public void setClosed() {
+        closed = true;
+    }
+
+    public void setOpen() {
+        closed = false;
     }
 
     public void connectToRobot(String address) throws Exception
@@ -42,7 +55,7 @@ public class Robot extends BasicRobot
 		messages.setLength(0);
 
         connect(address);
-		closed = false;
+		setOpen();
         RemoteRequestEV3 brick = getBrick();
 
 
@@ -117,36 +130,58 @@ public class Robot extends BasicRobot
     }
 
     public void close() {
+        StrictMode.setThreadPolicy(policy);
 		messages.setLength(0);
         if (! closed) {
+            setClosed();
             super.disconnected = true;
+            if (motor != null) {
+                try {
+                    motor.stop();
+                    //messages.append("   Closing Jaw Motor " + '\n');
+                    motor.close();
+                    SystemClock.sleep(10);
+                } catch (Exception e) {
+                    System.err.println("Problem closing Motor");
+                }
+            }
+
             try {
-                motor.stop();
-				//messages.append("   Closing Jaw Motor " + '\n');
-				motor.close();
-
-                SystemClock.sleep(10);
-				motorR.stop();
-				motorL.stop();
-				messages.append("   Closing Right Motor " + '\n');
-				motorR.close();
-
-                SystemClock.sleep(10);
-				messages.append("   Closing Left Motor " + '\n');
-				motorL.close();
-
-                SystemClock.sleep(10);
                 pilot.stop();
                 messages.append("   Closing Pilot " + '\n');
                 pilot.close();
                 SystemClock.sleep(10);
             } catch (Exception e) {
-
+                System.err.println("Problem closing Pilot");
             }
+
+            if (motorR != null & motorL != null) {
+                try {
+                    motorR.stop();
+                    messages.append("   Closing Right Motor " + '\n');
+                    motorR.close();
+
+                    // motorL.stop();
+                    SystemClock.sleep(10);
+                } catch (Exception e) {
+                    System.err.println("Problem closing motors");
+                }
+
+                try {
+                    motorL.stop();
+                    messages.append("   Closing Left Motor " + '\n');
+                    motorL.close();
+
+                    SystemClock.sleep(10);
+                } catch (Exception e) {
+                    System.err.println("Problem closing motors");
+                }
+            }
+
             messages.append("   Closing Remaining Sensors" + '\n');
 			super.close();
         }
-        closed = true;
+        setClosed();
     }
 
 

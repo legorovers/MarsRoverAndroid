@@ -122,11 +122,9 @@ public class MainPage extends AppCompatActivity implements BaseBluetoothFragment
 		};
 		drawerToggle.setDrawerIndicatorEnabled(true);
 		drawerLayout.setDrawerListener(drawerToggle);
-		drawerList.setOnItemClickListener(new AdapterView.OnItemClickListener()
-		{
+		drawerList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 			@Override
-			public void onItemClick(AdapterView<?> parent, View view, int position, long id)
-			{
+			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 				changeView(position);
 			}
 		});
@@ -183,6 +181,13 @@ public class MainPage extends AppCompatActivity implements BaseBluetoothFragment
 	{
 		super.onPostCreate(savedInstanceState);
 		drawerToggle.syncState();
+	}
+
+	@Override
+	protected void onPause()
+	{
+		robotStore.disconnect();
+		super.onPause();
 	}
 
 	@Override
