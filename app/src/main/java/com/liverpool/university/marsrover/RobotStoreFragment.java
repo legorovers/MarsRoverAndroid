@@ -94,7 +94,7 @@ public class RobotStoreFragment extends Fragment
 		}
 		else
 		{
-			btRobot.disconnect();
+			btRobot.setDisconnecting();
 		}
 	}
 

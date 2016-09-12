@@ -513,12 +513,14 @@ public class BluetoothRobot implements Runnable
 			}
 			else
 			{
-				running = false;
+				// running = false;
+				pathFound = false;
 				abstraction_engine.stop();
 			}
 		}
 		else
 		{
+			pathFound = false;
 			abstraction_engine.stop();
 		}
 	}
@@ -588,8 +590,15 @@ public class BluetoothRobot implements Runnable
 			state.states.clear();
 			state.colour = 0;
 			state.distance = 0;
-			close();
-			status = ConnectStatus.DISCONNECTED;
+
+			//while (status != ConnectStatus.DISCONNECTED) {
+			//	SystemClock.sleep(750);
+			//	if (status != ConnectStatus.DISCONNECTING && status != ConnectStatus.DISCONNECTED) {
+					disconnect();
+			//	}
+			// }
+			//close();
+			// status = ConnectStatus.DISCONNECTED;
 
         }
         catch (Exception e)
@@ -676,6 +685,13 @@ public class BluetoothRobot implements Runnable
         status = ConnectStatus.DISCONNECTING;
         setRunning(false);
 		close();
+		status = ConnectStatus.DISCONNECTED;
+	}
+
+	public void setDisconnecting() {
+		if (status == ConnectStatus.CONNECTED) {
+			status = ConnectStatus.DISCONNECTING;
+		}
 	}
 
 	public void close()
