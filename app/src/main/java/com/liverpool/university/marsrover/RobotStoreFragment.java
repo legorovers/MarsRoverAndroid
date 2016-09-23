@@ -31,9 +31,9 @@ public class RobotStoreFragment extends Fragment
 		btRobot = new BluetoothRobot();
 	}
 
-	public void setSettings(float obstacle, int blackMax, int waterMin, int waterMax, int waterNBMax)
+	public void setSettings(float obstacle, int blackMax, int waterMin, int waterMax, int waterRMax, int waterGMax)
 	{
-		btRobot.changeSettings(obstacle, blackMax, waterMin, waterMax, waterNBMax);
+		btRobot.changeSettings(obstacle, blackMax, waterMin, waterMax, waterRMax, waterGMax);
 	}
 
 	public void setRule(int pos, BluetoothRobot.RobotRule rule)
