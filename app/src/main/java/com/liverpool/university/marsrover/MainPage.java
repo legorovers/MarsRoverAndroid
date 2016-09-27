@@ -313,8 +313,8 @@ public class MainPage extends AppCompatActivity implements BaseBluetoothFragment
 	}
 
 	@Override
-	public void settingsChanged(float obstacle, int blackMax, int waterMin, int waterMax, int waterNBMax) {
-		robotStore.setSettings(obstacle, blackMax, waterMin, waterMax, waterNBMax);
+	public void settingsChanged(float obstacle, int blackMax, int waterMin, int waterMax, int waterRMax, int waterGMax) {
+		robotStore.setSettings(obstacle, blackMax, waterMin, waterMax, waterRMax, waterGMax);
 	}
 
 	public void setChanged(boolean education_set) {
