@@ -18,7 +18,7 @@ public class BaseBluetoothFragment extends Fragment
 	{
 		BluetoothRobot.RobotRule getRule(int pos);
 		void ruleChanged(int pos, BluetoothRobot.RobotRule rule);
-		int getFoundColour();
+		// int getFoundColour();
 		BluetoothRobot.BeliefSet getBelief();
 		BluetoothRobot.ConnectStatus getConnectionStatus();
 		EASSAgent getReasoningEngine();

@@ -1,4 +1,3 @@
-package EV3;
 // ----------------------------------------------------------------------------
 // Copyright (C) 2015 Strategic Facilities Technology Council 
 //
@@ -22,6 +21,7 @@ package EV3;
 // http://www.csc.liv.ac.uk/~lad
 //
 //----------------------------------------------------------------------------
+package EV3;
 
 import java.util.HashMap;
 import java.util.Set;

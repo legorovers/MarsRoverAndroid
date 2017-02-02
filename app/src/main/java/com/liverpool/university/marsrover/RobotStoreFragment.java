@@ -15,6 +15,8 @@ import EV3.BluetoothRobot;
  * Holds the bluetooth event and prevents loss of bluetooth connection during destruction of
  * app. (E.G. Rotation Changes)
  *
+ * This is the key link between the User Interface and the Robot.
+ *
  * Passes data to the EV3 Connection Thread
  * Created by joecollenette on 02/07/2015.
  */
@@ -139,10 +141,10 @@ public class RobotStoreFragment extends Fragment
 		return btRobot.getTimeToAction();
 	}
 
-	public int getFoundColour()
-	{
-		return btRobot.getColourFound();
-	}
+	// public int getFoundColour()
+	//{
+	//	return btRobot.getColourFound();
+	//}
 
 	public void setChanged(boolean education_set) {
 		btRobot.setChanged(education_set);

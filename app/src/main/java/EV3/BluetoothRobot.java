@@ -1,3 +1,27 @@
+// ----------------------------------------------------------------------------
+// Copyright (C) 2015 Strategic Facilities Technology Council
+//
+// This file is part of the Engineering Autonomous Space Software (EASS) Library.
+//
+// The EASS Library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 3 of the License, or (at your option) any later version.
+//
+// The EASS Library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+// Lesser General Public License for more details.
+//
+// You should have received a copy of the GNU Lesser General Public
+// License along with the EASS Library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+//
+// To contact the authors:
+// http://www.csc.liv.ac.uk/~lad
+//
+//----------------------------------------------------------------------------
+
 package EV3;
 
 import android.graphics.Color;
@@ -23,14 +47,26 @@ import ail.util.AILexception;
 import eass.semantics.EASSAgent;
 
 /**
- * Thread that manages the connection to the EV3, also manages Beliefs, Rules and actions
+ * Thread that manages the connection to the EV3, interactions between the abstraction and reasoning
+ * engines and manages sets of beliefs and actions etc.
  *
  * Created by joecollenette on 02/07/2015.
  */
 public class BluetoothRobot implements Runnable
 {
-	public enum ConnectStatus {CONNECTED, DISCONNECTED, CONNECTING, DISCONNECTING}
+    // Abstraction and reasoning engines and environment for the reasoning engine.
+    // Though this class also performs  some of the functions of the abstraction engine (see updateBeliefs() method).
+    private Robot abstraction_engine;
+    private EASSAgent reasoningengine;
+    EASSEV3Environment env = new EASSEV3Environment();
 
+    // Modes and status for managing connection and behaviour
+	public enum ConnectStatus {CONNECTED, DISCONNECTED, CONNECTING, DISCONNECTING}
+    private ConnectStatus status = ConnectStatus.DISCONNECTED;
+    public enum RobotMode {MANUAL, AVOID, WATER, LINE}
+    private RobotMode mode;
+
+    // BDI concepts
 	public enum BeliefStates
 	{
 		OBSTACLE(0),
@@ -74,51 +110,71 @@ public class BluetoothRobot implements Runnable
 
 	}
 
-	public enum RobotMode {MANUAL, AVOID, WATER, LINE}
-
-	public enum RobotAction
+	//Implements cloneable so when access to the arraylist is outside of this thread
+	//there will be no clashes during the belief update.
+    // Contains both the beliefs (OBSTACLE, PATH, etc) and the  sensor data.
+	public static class BeliefSet implements Cloneable
 	{
-		NOTHING(0), //Index must match with string array rule-options in strings.xml
-		STOP(1),
-		FORWARD(2),
-		FORWARD_A_BIT(3),
-		BACKWARD(4),
-		BACKWARD_A_BIT(5),
-		LEFT(6),
-		LEFT_A_BIT(7),
-		LEFT_A_LOT(8),
-		ARC_LEFT(9),
-		RIGHT(10),
-		RIGHT_A_BIT(11),
-		RIGHT_A_LOT(12),
-		ARC_RIGHT(13);
+		public float distance;
+		public int colour;
+		public ArrayList<BeliefStates> states = new ArrayList<BeliefStates>();
 
-
-		static RobotAction[] a = RobotAction.values();
-
-		int value;
-		RobotAction(int i)
+		@Override
+		public BeliefSet clone()
 		{
-			value = i;
+			BeliefSet b = new BeliefSet();
+			b.distance = distance;
+			b.colour = colour;
+			b.states = (ArrayList<BeliefStates>)states.clone();
+			return b;
 		}
+	}
+    private BeliefSet state;
+    private BeliefSet stateCopy;
 
-		public int toInt()
-		{
-			return value;
-		}
+    public enum RobotAction
+    {
+        NOTHING(0), //Index must match with string array rule-options in strings.xml
+        STOP(1),
+        FORWARD(2),
+        FORWARD_A_BIT(3),
+        BACKWARD(4),
+        BACKWARD_A_BIT(5),
+        LEFT(6),
+        LEFT_A_BIT(7),
+        LEFT_A_LOT(8),
+        ARC_LEFT(9),
+        RIGHT(10),
+        RIGHT_A_BIT(11),
+        RIGHT_A_LOT(12),
+        ARC_RIGHT(13);
 
-		public static RobotAction fromInt(int i)
-		{
 
-			for (int j = 0; j < a.length; j++)
-			{
-				if (a[j].toInt() == i)
-				{
-					return a[j];
-				}
-			}
-			return NOTHING;
-		}
+        static RobotAction[] a = RobotAction.values();
+
+        int value;
+        RobotAction(int i)
+        {
+            value = i;
+        }
+
+        public int toInt()
+        {
+            return value;
+        }
+
+        public static RobotAction fromInt(int i)
+        {
+
+            for (int j = 0; j < a.length; j++)
+            {
+                if (a[j].toInt() == i)
+                {
+                    return a[j];
+                }
+            }
+            return NOTHING;
+        }
 
         public Action toAILAction() {
             if (value == 0) {
@@ -138,43 +194,25 @@ public class BluetoothRobot implements Runnable
             } else if (value == 7) {
                 return new Action("left_a_bit");
             } else if (value == 8) {
-				return new Action("left_a_lot");
-			} else if (value == 9) {
-				return new Action("forward_left");
+                return new Action("left_a_lot");
+            } else if (value == 9) {
+                return new Action("forward_left");
             } else if (value == 10) {
-				return new Action("right");
-			} else if (value == 11) {
-				return new Action("right_a_bit");
-			} else if (value == 12) {
-				return new Action("right_a_lot");
-			} else if (value == 13) {
-				return new Action("forward_right");
-			} else {
+                return new Action("right");
+            } else if (value == 11) {
+                return new Action("right_a_bit");
+            } else if (value == 12) {
+                return new Action("right_a_lot");
+            } else if (value == 13) {
+                return new Action("forward_right");
+            } else {
                 return new Action("stop");
             }
         }
-	}
+    }
+    private LinkedBlockingDeque<Pair<RobotAction, Long>> actions;
 
-	//Implements cloneable so when access to the arraylist is outside of this thread
-	//there will be no clashes during the belief update.
-	public static class BeliefSet implements Cloneable
-	{
-		public float distance;
-		public int colour;
-		public ArrayList<BeliefStates> states = new ArrayList<BeliefStates>();
-
-		@Override
-		public BeliefSet clone()
-		{
-			BeliefSet b = new BeliefSet();
-			b.distance = distance;
-			b.colour = colour;
-			b.states = (ArrayList<BeliefStates>)states.clone();
-			return b;
-		}
-	}
-
-	public static class RobotRule
+    public static class RobotRule
 	{
 		private boolean on;
 		private BeliefStates type;
@@ -255,42 +293,150 @@ public class BluetoothRobot implements Runnable
             return agentPlan;
         }
 	}
+    private RobotRule[] rules;
 
-    private Robot abstraction_engine;
     private Exception generatedException;
 	private String btAddress;
-	private LinkedBlockingDeque<Pair<RobotAction, Long>> actions;
-	private ConnectStatus status = ConnectStatus.DISCONNECTED;
-
-	private RobotRule[] rules;
-	private RobotMode mode;
-	private boolean running;
+    private boolean running;
 	
-	private BeliefSet state;
-	private BeliefSet stateCopy;
-	private boolean obstacleChanged;
-	private boolean pathChanged;
-	private boolean waterChanged;
-	private boolean pathFound;
+	//private boolean obstacleChanged;
+	// private boolean pathChanged;
+	//private boolean waterChanged;
 
+    // Used to track status in Find Water routine.
+    private boolean pathFound;
+    private Random rTurn = new Random();
+
+    // Default settings for sensor thresholds that generate beliefs;
 	private float objectDetected = 0.4f;
 	private int blackMax = 50;
 	private int waterMin = 50;
 	private int waterMax = 100;
 	private int waterRMax = 50;
 	private int waterGMax = 50;
-	private Random rTurn = new Random();
-	//private float pathLight = 0.09f;
-	//private PointF waterLightRange = new PointF(0.06f, 0.09f);
+
+    // Controls for Navigation.
 	private int speed = 10;
 	private long delay = 0;
 	private long untilAction = 0;
 
-    EASSEV3Environment env = new EASSEV3Environment();
-    EASSAgent reasoningengine;
+    // Constructor
+    public BluetoothRobot()
+    {
+        actions = new LinkedBlockingDeque<Pair<RobotAction, Long>>();
 
-    // private int beliefchangecounter = 0;
+        rules = new RobotRule[]{
+                new RobotRule(),
+                new RobotRule(),
+                new RobotRule(),
+                new RobotRule()
+        };
 
+        state = new BeliefSet();
+        abstraction_engine = new Robot();
+        mode = RobotMode.MANUAL;
+        running = false;
+
+
+        MAS mas = new MAS();
+        mas.setEnv(env);
+        try {
+            reasoningengine = new EASSAgent("robot");
+        } catch (AILexception aiLexception) {
+            aiLexception.printStackTrace();
+        }
+        mas.addAg(reasoningengine);
+        env.addAgent(reasoningengine);
+
+        env.addRobot("robot", abstraction_engine);
+    }
+
+    @Override
+    public void run()
+    {
+        try
+        {
+            //Connect to robot
+            generatedException = null;
+            status = ConnectStatus.CONNECTING;
+            abstraction_engine.connectToRobot(btAddress);
+            status = ConnectStatus.CONNECTED;
+            float disInput;
+            int curSpeed = speed;
+            //While connected or no signal to disconnect
+            while (status == ConnectStatus.CONNECTED)
+            {
+                // Perform 10 reasoning cycles in the reasoning engine.
+                // NB. Actions performed by the reasoning cycle are passed directly
+                // to the abstraction engine by the environment.
+                 for (int i = 0; i < 10; i++) {
+                    reasoningengine.reason();
+                }
+
+                // Get new information from sensors.
+                if (abstraction_engine.isHome_edition()) {
+                    disInput = abstraction_engine.getirSensor().getSample();
+                    disInput = disInput/100;
+                } else {
+                    disInput = abstraction_engine.getusSensor().getSample();
+                }
+                float[] rgb = abstraction_engine.getRGBSensor().getRGBSample();
+
+                // Update Beliefs
+                state.colour = Color.rgb((int)(rgb[0] * 850), (int)(rgb[1] * 1026), (int)(rgb[2] * 1815));
+                state.distance = disInput;
+                updateBeliefs(disInput, state.colour);
+
+                //Create newest copy of beliefs
+                stateCopy = state.clone();
+
+                // Update robot speed if necessary
+                if (curSpeed != speed)
+                {
+                    abstraction_engine.setTravelSpeed(speed);
+                    curSpeed = speed;
+                }
+
+                // Do something.
+                switch(mode)
+                {
+                    case MANUAL:
+                        doAction();
+                        break;
+                    case LINE:
+                        doLine();
+                        break;
+                    case AVOID:
+                        doAvoid();
+                        break;
+                    case WATER:
+                        doWater();
+                        break;
+                }
+            }
+
+            //Clear beliefs before disconnect
+            state.states.clear();
+            state.colour = 0;
+            state.distance = 0;
+
+            disconnect();
+
+        }
+        catch (Exception e)
+        {
+            status = ConnectStatus.DISCONNECTING;
+            if (abstraction_engine != null && abstraction_engine.isConnected())
+            {
+                abstraction_engine.close();
+            }
+            status = ConnectStatus.DISCONNECTED;
+            generatedException = e;
+        }
+    }
+
+    // Update both the belief set here (used for displaying information to the user) and
+    // the beliefs in the Reasoning Engine.
 	private void updateBeliefs(float distance, int colour)
 	{
 		boolean curObs = state.states.contains(BeliefStates.OBSTACLE);
@@ -300,24 +446,18 @@ public class BluetoothRobot implements Runnable
 			{
 				state.states.add(BeliefStates.OBSTACLE);
                 env.addSharedBelief("robot", new Literal("obstacle"));
-                // beliefchangecounter = 0;
 			}
 		}
 		else
 		{
 			if (state.states.contains(BeliefStates.OBSTACLE))
 			{
-              //   if (beliefchangecounter > 2) {
-                    state.states.remove(BeliefStates.OBSTACLE);
-                    env.removeSharedBelief("robot", new Literal("obstacle"));
-              //      beliefchangecounter = 0;
-              //  } else {
-             //       beliefchangecounter++;
-             //   }
+                state.states.remove(BeliefStates.OBSTACLE);
+                env.removeSharedBelief("robot", new Literal("obstacle"));
 			}
 
 		}
-		obstacleChanged = curObs != state.states.contains(BeliefStates.OBSTACLE);
+
 		int red = Color.red(colour);
 		int blue = Color.blue(colour);
 		int green = Color.green(colour);
@@ -339,7 +479,6 @@ public class BluetoothRobot implements Runnable
                 env.removeSharedBelief("robot", new Literal("path"));
 			}
 		}
-		pathChanged = curPath != state.states.contains(BeliefStates.PATH);
 
 		boolean curWater = state.states.contains(BeliefStates.WATER);
 		if (((blue > green) && (blue > red)) && (blue > waterMin) && ((red < waterRMax) && (blue < waterMax) && (green < waterGMax)))
@@ -358,45 +497,11 @@ public class BluetoothRobot implements Runnable
                 env.removeSharedBelief("robot", new Literal("water"));
 			}
 		}
-		waterChanged = curWater != state.states.contains(BeliefStates.WATER);
-		// System.err.println("current beliefs are: " + env.getPercepts("robot", false));
 
 	}
 
-	/* private void checkRules()
-	{
-		for (int i = 0; i < rules.length; i++)
-		{
-			RobotRule rule = rules[i];
-			boolean doActions = false;
-			if (rule.getEnabled())
-			{
-				boolean onAppeared = (rule.getOnAppeared() == 0);
-				switch (rule.getType())
-				{
-					case WATER:
-						doActions = waterChanged && (onAppeared == state.states.contains(BeliefStates.WATER));
-						break;
-					case OBSTACLE:
-						doActions = obstacleChanged && (onAppeared == state.states.contains(BeliefStates.OBSTACLE));
-						break;
-					case PATH:
-						doActions = pathChanged && (onAppeared == state.states.contains(BeliefStates.OBSTACLE));
-						break;
-				}
-				if (doActions)
-				{
-					//Go backwards so actions are put in order
-					for (int j = rule.actions.length - 1; j >= 0; j--)
-					{
-						//Add action to the front of the queue with the delay removed so that the action happens immediately
-						actions.addFirst(new Pair<RobotAction, Long>(rule.getAction(j), SystemClock.uptimeMillis() - delay));
-					}
-				}
-			}
-		}
-	} */
 
+    // Navigation Panel Support
 	private void doAction()
 	{
 		if (actions.peek() != null)
@@ -447,6 +552,25 @@ public class BluetoothRobot implements Runnable
 		}
 	}
 
+    public void addAction(RobotAction action, boolean mustprocess)
+    {
+        if (actions.isEmpty() || mustprocess == true) {
+            actions.add(new Pair<RobotAction, Long>(action, SystemClock.uptimeMillis()));
+        }
+    }
+
+    public long getTimeToAction()
+    {
+        return untilAction;
+    }
+
+    public void updateManual(long delayMills, int _speed)
+    {
+        delay = delayMills;
+        speed = _speed;
+    }
+
+    // Task Panel Options
 	private void doAvoid()
 	{
 		if (running)
@@ -526,260 +650,11 @@ public class BluetoothRobot implements Runnable
 		}
 	}
 
-    public ArrayList<Literal> getBeliefs() {
-        return reasoningengine.getBB().getAll();
-    }
+    //public ArrayList<Literal> getBeliefs() {
+    //    return reasoningengine.getBB().getAll();
+    //}
 
-    @Override
-    public void run()
-    {
-        try
-        {
-			//Connect to robot
-			generatedException = null;
-			status = ConnectStatus.CONNECTING;
-			abstraction_engine.connectToRobot(btAddress);
-			status = ConnectStatus.CONNECTED;
-			float disInput;
-			int curSpeed = speed;
-			//While connected or no signal to disconnect
-			while (status == ConnectStatus.CONNECTED)
-			{
-                // env.eachrun();
-                for (int i = 0; i < 10; i++) {
-                    reasoningengine.reason();
-                    // System.err.println(reasoningengine);
-                }
-
-				if (abstraction_engine.isHome_edition()) {
-					disInput = abstraction_engine.getirSensor().getSample();
-                    disInput = disInput/100;
-				} else {
-					disInput = abstraction_engine.getusSensor().getSample();
-				}
-				float[] rgb = abstraction_engine.getRGBSensor().getRGBSample();
-				//Log.w("Colour Values", "R - " + (int) (rgb[0] * 850) + " G - " + (int) (rgb[1] * 1026) + " B - " + (int) (rgb[2] * 1815));
-				state.colour = Color.rgb((int)(rgb[0] * 850), (int)(rgb[1] * 1026), (int)(rgb[2] * 1815));
-				state.distance = disInput;
-				updateBeliefs(disInput, state.colour);
-				//Create newest copy of beliefs
-				stateCopy = state.clone();
-				if (curSpeed != speed)
-				{
-					abstraction_engine.setTravelSpeed(speed);
-					curSpeed = speed;
-				}
-
-				switch(mode)
-				{
-					case MANUAL:
-						// checkRules();
-						doAction();
-						break;
-					case LINE:
-						doLine();
-						break;
-					case AVOID:
-						doAvoid();
-						break;
-					case WATER:
-						doWater();
-						break;
-				}
-			}
-			//Clear beliefs before disconnect
-			state.states.clear();
-			state.colour = 0;
-			state.distance = 0;
-
-			//while (status != ConnectStatus.DISCONNECTED) {
-			//	SystemClock.sleep(750);
-			//	if (status != ConnectStatus.DISCONNECTING && status != ConnectStatus.DISCONNECTED) {
-					disconnect();
-			//	}
-			// }
-			//close();
-			// status = ConnectStatus.DISCONNECTED;
-
-        }
-        catch (Exception e)
-        {
-			status = ConnectStatus.DISCONNECTING;
-			if (abstraction_engine != null && abstraction_engine.isConnected())
-			{
-				abstraction_engine.close();
-			}
-			status = ConnectStatus.DISCONNECTED;
-            generatedException = e;
-        }
-    }
-
-    public boolean isConnected() {
-        return (status == ConnectStatus.CONNECTED);
-    }
-
-	public BluetoothRobot()
-	{
-		actions = new LinkedBlockingDeque<Pair<RobotAction, Long>>();
-
-		rules = new RobotRule[]{
-				new RobotRule(),
-				new RobotRule(),
-				new RobotRule(),
-				new RobotRule()
-		};
-		
-		state = new BeliefSet();
-		abstraction_engine = new Robot();
-		mode = RobotMode.MANUAL;
-		running = false;
-
-
-        MAS mas = new MAS();
-        mas.setEnv(env);
-        try {
-            reasoningengine = new EASSAgent("robot");
-        } catch (AILexception aiLexception) {
-            aiLexception.printStackTrace();
-        }
-        mas.addAg(reasoningengine);
-        env.addAgent(reasoningengine);
-
-        // EASSAgent fake_abstractionengine = new EASSagent
-
-        env.addRobot("robot", abstraction_engine);
-	}
-
-	public void addAction(RobotAction action, boolean mustprocess)
-	{
-		if (actions.isEmpty() || mustprocess == true) {
-			actions.add(new Pair<RobotAction, Long>(action, SystemClock.uptimeMillis()));
-		}
-	}
-
-    public EASSAgent getReasoningEngine() {
-        return reasoningengine;
-    }
-
-	public RobotRule[] getAllRules()
-	{
-		return rules;
-	}
-
-    public Exception getGeneratedException()
-    {
-        return generatedException;
-    }
-
-	public void setBTAddress(String address)
-	{
-		btAddress = address;
-	}
-
-	public ConnectStatus connectionStatus()
-	{
-		return status;
-	}
-
-	public void disconnect()
-	{
-        status = ConnectStatus.DISCONNECTING;
-        setRunning(false);
-		close();
-		status = ConnectStatus.DISCONNECTED;
-	}
-
-	public void setDisconnecting() {
-		if (status == ConnectStatus.CONNECTED) {
-			status = ConnectStatus.DISCONNECTING;
-		}
-	}
-
-	public void close()
-	{
-		if (abstraction_engine != null && abstraction_engine.isConnected())
-		{
-			abstraction_engine.close();
-		}
-	}
-
-	public String getMessages()
-	{
-		if (abstraction_engine != null)
-		{
-			return abstraction_engine.getMessages();
-		}
-		else
-		{
-			return "No Current Messages";
-		}
-	}
-
-	public void changeSettings(float objectRange, int blackMaximum, int waterMinimum, int waterMaximum, int waterRMaximum, int waterGMaximum)
-	{
-		objectDetected = objectRange;
-		blackMax = blackMaximum;
-		waterMin = waterMinimum;
-		waterMax = waterMaximum;
-		waterRMax = waterRMaximum;
-		waterGMax = waterGMaximum;
-		//waterLightRange = new PointF(waterLower, waterUpper);
-		//pathLight = pathRange;
-	}
-
-	public void changedRule(int pos, RobotRule rule)
-	{
-        if (! (rules[pos].equals(rule))) {
-            RobotRule oldrule = rules[pos];
-            if (oldrule.getEnabled()) {
-                removePlan(oldrule);
-            }
-            rules[pos] = rule;
-            if (rule.getEnabled()) {
-                addPlan(rule);
-            }
-        }
-	}
-
-	public BeliefSet getBeliefSet()
-	{
-		return stateCopy;
-	}
-
-	public void setMode(RobotMode _mode)
-	{
-		running = false;
-		pathFound = false;
-		mode = _mode;
-	}
-
-	public long getTimeToAction()
-	{
-		return untilAction;
-	}
-
-	public void setRunning(boolean _running)
-	{
-		actions.clear();
-		running = _running;
-	}
-
-	public void updateManual(long delayMills, int _speed)
-	{
-		delay = delayMills;
-		speed = _speed;
-	}
-
-	public boolean getRunning()
-	{
-		return running;
-	}
-
-	public int getColourFound()
-	{
-		return state.colour;
-	}
-
+    // Support for Rules Panel.
     public void addPlan(RobotRule r) {
         Plan p = new Plan();
         if (r.getOnAppeared() == 0) {
@@ -815,7 +690,127 @@ public class BluetoothRobot implements Runnable
         reasoningengine.removePlan(r.getPlan());
     }
 
+    public RobotRule[] getAllRules()
+    {
+        return rules;
+    }
+
+    public void changedRule(int pos, RobotRule rule)
+    {
+        if (! (rules[pos].equals(rule))) {
+            RobotRule oldrule = rules[pos];
+            if (oldrule.getEnabled()) {
+                removePlan(oldrule);
+            }
+            rules[pos] = rule;
+            if (rule.getEnabled()) {
+                addPlan(rule);
+            }
+        }
+    }
+
+    // Connect Panel Support
     public void setChanged(boolean education_set) {
         abstraction_engine.setChanged(education_set);
     }
+
+    public void setBTAddress(String address)
+    {
+        btAddress = address;
+    }
+
+    public ConnectStatus connectionStatus()
+    {
+        return status;
+    }
+
+    public boolean isConnected() {
+        return (status == ConnectStatus.CONNECTED);
+    }
+
+    public void disconnect()
+    {
+        status = ConnectStatus.DISCONNECTING;
+        setRunning(false);
+        close();
+        status = ConnectStatus.DISCONNECTED;
+    }
+
+    public void setDisconnecting() {
+        if (status == ConnectStatus.CONNECTED) {
+            status = ConnectStatus.DISCONNECTING;
+        }
+    }
+
+    public void close()
+    {
+        if (abstraction_engine != null && abstraction_engine.isConnected())
+        {
+            abstraction_engine.close();
+        }
+    }
+
+    // NB. Not agent messages but messages generated while trying to connect to robot
+    public String getMessages()
+    {
+        if (abstraction_engine != null)
+        {
+            return abstraction_engine.getMessages();
+        }
+        else
+        {
+            return "No Current Messages";
+        }
+    }
+
+    // Settings Panel Support
+    public void changeSettings(float objectRange, int blackMaximum, int waterMinimum, int waterMaximum, int waterRMaximum, int waterGMaximum)
+    {
+        objectDetected = objectRange;
+        blackMax = blackMaximum;
+        waterMin = waterMinimum;
+        waterMax = waterMaximum;
+        waterRMax = waterRMaximum;
+        waterGMax = waterGMaximum;
+        //waterLightRange = new PointF(waterLower, waterUpper);
+        //pathLight = pathRange;
+    }
+
+    // Set up and general setters and getters.
+    public EASSAgent getReasoningEngine() {
+        return reasoningengine;
+    }
+
+    public Exception getGeneratedException()
+    {
+        return generatedException;
+    }
+
+	public BeliefSet getBeliefSet()
+	{
+		return stateCopy;
+	}
+
+	public void setMode(RobotMode _mode)
+	{
+		running = false;
+		pathFound = false;
+		mode = _mode;
+	}
+
+	public void setRunning(boolean _running)
+	{
+		actions.clear();
+		running = _running;
+	}
+
+	public boolean getRunning()
+	{
+		return running;
+	}
+
+	//public int getColourFound()
+	//{
+	//	return state.colour;
+	//}
 }
