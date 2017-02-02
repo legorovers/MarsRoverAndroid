@@ -229,11 +229,11 @@ public class MainPage extends AppCompatActivity implements BaseBluetoothFragment
 		robotStore.setRule(pos, rule);
 	}
 
-	@Override
-	public int getFoundColour()
-	{
-		return robotStore.getFoundColour();
-	}
+	//@Override
+	//public int getFoundColour()
+	//{
+	//	return robotStore.getFoundColour();
+	//}
 
 	@Override
 	public BluetoothRobot.RobotRule getRule(int pos)
