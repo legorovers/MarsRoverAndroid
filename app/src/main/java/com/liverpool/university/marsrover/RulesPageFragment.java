@@ -18,7 +18,10 @@ import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.TextView;
 
+import java.util.Iterator;
+
 import EV3.BluetoothRobot;
+import ail.syntax.Goal;
 import ail.syntax.Literal;
 
 public class RulesPageFragment extends BaseBluetoothFragment
@@ -54,12 +57,29 @@ public class RulesPageFragment extends BaseBluetoothFragment
 				}
 				beliefSet.append("]");
 				((TextView) getView().findViewById(R.id.txtBeliefs)).setText(beliefSet.toString());
+
+				goalSet.setLength(0);
+				goalSet.append("Goals - [");
+				start = true;
+				Iterator<Goal> goals = getReasoningEngine().getGoals();
+				while (goals.hasNext()) {
+					if (!start) {
+						goalSet.append(", ");
+					} else {
+						start = false;
+					}
+
+					goalSet.append(goals.next().getFunctor());
+				}
+				goalSet.append("]");
+				((TextView) getView().findViewById(R.id.txtGoals)).setText(goalSet.toString());
 			}
 			beliefHandle.postDelayed(getBeliefSet, 100);
 		}
 	};
 
 	private StringBuilder beliefSet = new StringBuilder();
+	private StringBuilder goalSet = new StringBuilder();
 	private Handler beliefHandle = new Handler();
 
 	private class itemSelected implements AdapterView.OnItemSelectedListener
@@ -82,7 +102,7 @@ public class RulesPageFragment extends BaseBluetoothFragment
 	{
 		BluetoothRobot.RobotRule rule = new BluetoothRobot.RobotRule(
 				((CheckBox)getView().findViewById(R.id.chkRule)).isChecked(),
-				BluetoothRobot.BeliefStates.fromInt(((Spinner) getView().findViewById(R.id.cboType)).getSelectedItemPosition()),
+				BluetoothRobot.robotEvent.fromInt(((Spinner) getView().findViewById(R.id.cboType)).getSelectedItemPosition()),
 				((Spinner) getView().findViewById(R.id.cboObstacle)).getSelectedItemPosition(),
 				BluetoothRobot.RobotAction.fromInt(((Spinner) getView().findViewById(R.id.cboAction1)).getSelectedItemPosition()),
 				BluetoothRobot.RobotAction.fromInt(((Spinner) getView().findViewById(R.id.cboAction2)).getSelectedItemPosition()),
@@ -122,6 +142,9 @@ public class RulesPageFragment extends BaseBluetoothFragment
 		((Spinner)view.findViewById(R.id.cboAction2)).setAdapter(A2adapter);
 		ArrayAdapter<String> A3adapter = new ArrayAdapter<String>(view.getContext(), R.layout.combo_list_item, R.id.txtView, getResources().getStringArray(R.array.rule_options));
 		((Spinner)view.findViewById(R.id.cboAction3)).setAdapter(A3adapter);
+
+		ArrayAdapter<String> GoalAdapter = new ArrayAdapter<String>(view.getContext(), R.layout.combo_list_item, R.id.txtView, getResources().getStringArray(R.array.goal_list));
+		((Spinner)view.findViewById(R.id.cboGoal)).setAdapter(GoalAdapter);
 
 
 		((Spinner)view.findViewById(R.id.cboRule)).setOnItemSelectedListener(new AdapterView.OnItemSelectedListener()
@@ -166,6 +189,23 @@ public class RulesPageFragment extends BaseBluetoothFragment
 		((Spinner)view.findViewById(R.id.cboAction1)).setOnItemSelectedListener(new itemSelected());
 		((Spinner)view.findViewById(R.id.cboAction2)).setOnItemSelectedListener(new itemSelected());
 		((Spinner)view.findViewById(R.id.cboAction3)).setOnItemSelectedListener(new itemSelected());
+
+		((Spinner)view.findViewById(R.id.cboGoal)).setOnItemSelectedListener(new AdapterView.OnItemSelectedListener()
+		{
+			@Override
+			public void onItemSelected(AdapterView<?> parent, View view, int position, long id)
+			{
+				BluetoothRobot.Goal goal = BluetoothRobot.Goal.fromInt(((Spinner) getView().findViewById(R.id.cboGoal)).getSelectedItemPosition());
+				btEvents.setGoal(goal);
+			}
+
+			@Override
+			public void onNothingSelected(AdapterView<?> parent)
+			{
+
+			}
+		}
+		);
 		return view;
 	}
 

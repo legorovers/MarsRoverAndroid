@@ -23,9 +23,11 @@ import java.text.SimpleDateFormat;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 import java.util.List;
+import java.util.Iterator;
 
 
 import ail.syntax.Literal;
+import ail.syntax.Goal;
 import eass.semantics.EASSAgent;
 
 import EV3.BluetoothRobot;
@@ -69,10 +71,31 @@ public class NavigationPageFrag extends BaseBluetoothFragment implements Adapter
 					beliefSet.append(l.toString());
 				}
 				beliefSet.append("]");
+
+                // BluetoothRobot.GoalSet currentGoals = btEvents.getGoals();
+                goalSet.setLength(0);
+                goalSet.append("Goals - [");
+                Iterator<Goal> goals = getReasoningEngine().getGoals();
+                start = true;
+                while (goals.hasNext()) {
+                    if (!start) {
+                        goalSet.append(", ");
+                    } else {
+                        start = false;
+                    }
+
+                    goalSet.append(goals.next().getFunctor());
+                }
+                goalSet.append("]");
+                ((TextView) getView().findViewById(R.id.txtNGoals)).setText(goalSet.toString());
+
+
 				((TextView) getView().findViewById(R.id.txtNBeliefs)).setText(beliefSet.toString());
 				time = btEvents.getTimeTil();
 				String formatStr = new SimpleDateFormat("mm:ss", Locale.ENGLISH).format(time);
 				((TextView) getView().findViewById(R.id.txtTimeTil)).setText("Time until next action - " + formatStr);
+
+
 			}
 			beliefHandle.postDelayed(getBeliefSet, 100);
 		}
@@ -80,6 +103,8 @@ public class NavigationPageFrag extends BaseBluetoothFragment implements Adapter
 
 	private StringBuilder beliefSet = new StringBuilder();
 	private Handler beliefHandle = new Handler();
+
+    private StringBuilder goalSet = new StringBuilder();
 
 	private class ActionClicked implements View.OnClickListener
 	{

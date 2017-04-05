@@ -37,7 +37,10 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import ail.mas.MAS;
+import ail.semantics.AILAgent;
 import ail.syntax.Action;
+import ail.syntax.DefaultAILStructure;
+import ail.syntax.Intention;
 import ail.syntax.Literal;
 import ail.syntax.Plan;
 import ail.syntax.Deed;
@@ -132,6 +135,118 @@ public class BluetoothRobot implements Runnable
     private BeliefSet state;
     private BeliefSet stateCopy;
 
+    public enum Goal
+    {
+        NONE(0),
+        OBSTACLE(1),
+        PATH(2),
+        WATER(3);
+
+        static Goal[] a = Goal.values();
+
+        int value;
+        Goal(int i)
+        {
+            value = i;
+        }
+
+        public int toInt()
+        {
+            return value;
+        }
+
+        public static Goal fromInt(int i)
+        {
+            for (int j = 0; j < a.length; j++)
+            {
+                if (a[j].toInt() == i)
+                {
+                    return a[j];
+                }
+            }
+            return OBSTACLE;
+        }
+
+        public Literal toLiteral() {
+            if (value == 0) {
+                return new Literal("no_goal");
+            } else if (value == 1) {
+                return new Literal("obstacle");
+            } else if (value == 2){
+                return new Literal("path");
+            } else {
+                return new Literal("water");
+            }
+        }
+
+    }
+
+    public static class GoalSet implements Cloneable
+    {
+        public ArrayList<BeliefStates>  goals = new ArrayList<BeliefStates>();
+
+        @Override
+        public GoalSet clone()
+        {
+            GoalSet g = new GoalSet();
+            g.goals = (ArrayList<BeliefStates>)goals.clone();
+            return g;
+        }
+    }
+    private GoalSet goals;
+
+    public enum robotEvent
+    {
+        BOBSTACLE(0),
+        BWATER(1),
+        BPATH(2),
+        GOBSTACLE(3),
+        GWATER(4),
+        GPATH(5);
+
+        static robotEvent[] a = robotEvent.values();
+
+        int value;
+        robotEvent(int i)
+        {
+            value = i;
+        }
+
+        public int toInt()
+        {
+            return value;
+        }
+
+        public static robotEvent fromInt(int i)
+        {
+            for (int j = 0; j < a.length; j++)
+            {
+                if (a[j].toInt() == i)
+                {
+                    return a[j];
+                }
+            }
+            return BOBSTACLE;
+        }
+
+        public Event toEvent() {
+            if (value == 0) {
+                return new Event(DefaultAILStructure.AILAddition, DefaultAILStructure.AILBel, new Literal("obstacle"));
+            } else if (value == 1) {
+                return new Event(DefaultAILStructure.AILAddition, DefaultAILStructure.AILBel, new Literal("water"));
+            } else if (value == 2){
+                return new Event(DefaultAILStructure.AILAddition, DefaultAILStructure.AILBel, new Literal("path"));
+            } else if (value == 3) {
+                return new Event(DefaultAILStructure.AILAddition, new ail.syntax.Goal("obstacle"));
+            } else if (value == 4) {
+                return new Event(DefaultAILStructure.AILAddition, new ail.syntax.Goal("water"));
+            } else  {
+                return new Event(DefaultAILStructure.AILAddition, new ail.syntax.Goal("path"));
+            }
+        }
+
+    }
+
     public enum RobotAction
     {
         NOTHING(0), //Index must match with string array rule-options in strings.xml
@@ -147,7 +262,10 @@ public class BluetoothRobot implements Runnable
         RIGHT(10),
         RIGHT_A_BIT(11),
         RIGHT_A_LOT(12),
-        ARC_RIGHT(13);
+        ARC_RIGHT(13),
+        ACHIEVE_OBSTACLE(14),
+        ACHIEVE_PATH(15),
+        ACHIEVE_WATER(16);
 
 
         static RobotAction[] a = RobotAction.values();
@@ -176,37 +294,43 @@ public class BluetoothRobot implements Runnable
             return NOTHING;
         }
 
-        public Action toAILAction() {
+        public Deed toAILAction() {
             if (value == 0) {
-                return new Action("nothing");
+                return new Deed(new Action("nothing"));
             } else if (value == 1) {
-                return new Action("stop");
+                return new Deed(new Action("stop"));
             } else if (value == 2) {
-                return new Action("forward");
+                return new Deed(new Action("forward"));
             } else if (value == 3) {
-                return new Action("forward_a_bit");
+                return new Deed(new Action("forward_a_bit"));
             } else if (value == 4) {
-                return new Action("backward");
+                return new Deed(new Action("backward"));
             } else if (value == 5) {
-                return new Action("backward_a_bit");
+                return new Deed(new Action("backward_a_bit"));
             } else if (value == 6) {
-                return new Action("left");
+                return new Deed(new Action("left"));
             } else if (value == 7) {
-                return new Action("left_a_bit");
+                return new Deed(new Action("left_a_bit"));
             } else if (value == 8) {
-                return new Action("left_a_lot");
+                return new Deed(new Action("left_a_lot"));
             } else if (value == 9) {
-                return new Action("forward_left");
+                return new Deed(new Action("forward_left"));
             } else if (value == 10) {
-                return new Action("right");
+                return new Deed(new Action("right"));
             } else if (value == 11) {
-                return new Action("right_a_bit");
+                return new Deed(new Action("right_a_bit"));
             } else if (value == 12) {
-                return new Action("right_a_lot");
+                return new Deed(new Action("right_a_lot"));
             } else if (value == 13) {
-                return new Action("forward_right");
+                return new Deed(new Action("forward_right"));
+            } else if (value == 14) {
+                return new Deed(new ail.syntax.Goal("obstacle"));
+            } else if (value == 15) {
+                return new Deed(new ail.syntax.Goal("path"));
+            } else if (value == 16) {
+                return new Deed(new ail.syntax.Goal("water"));
             } else {
-                return new Action("stop");
+                    return new Deed(new Action("stop"));
             }
         }
     }
@@ -215,7 +339,7 @@ public class BluetoothRobot implements Runnable
     public static class RobotRule
 	{
 		private boolean on;
-		private BeliefStates type;
+		private robotEvent type;
 		private RobotAction[] actions;
 		private int onAppeared;
 
@@ -252,12 +376,12 @@ public class BluetoothRobot implements Runnable
 		public RobotRule()
 		{
 			on = false;
-			type = BeliefStates.OBSTACLE;
+			type = robotEvent.BOBSTACLE;
 			onAppeared = 0;
 			actions = new RobotAction[]{RobotAction.NOTHING, RobotAction.NOTHING, RobotAction.NOTHING};
 		}
 		
-		public RobotRule(boolean _on, BeliefStates _type, int appeared, RobotAction action1, RobotAction action2, RobotAction action3)
+		public RobotRule(boolean _on, robotEvent _type, int appeared, RobotAction action1, RobotAction action2, RobotAction action3)
 		{
 			type = _type;
 			on = _on;
@@ -280,7 +404,7 @@ public class BluetoothRobot implements Runnable
 			return actions[pos];
 		}
 
-		public BeliefStates getType()
+		public robotEvent getType()
 		{
 			return type;
 		}
@@ -658,16 +782,18 @@ public class BluetoothRobot implements Runnable
     public void addPlan(RobotRule r) {
         Plan p = new Plan();
         if (r.getOnAppeared() == 0) {
-            p.setTrigger(new Event(Event.AILAddition, Event.AILBel, r.getType().toLiteral()));
+            p.setTrigger(r.getType().toEvent());
         } else {
-            p.setTrigger(new Event(Event.AILDeletion, Event.AILBel, r.getType().toLiteral()));
+            Event trigger = r.getType().toEvent();
+            trigger.setTrigType(Event.AILDeletion);
+            p.setTrigger(trigger);
         }
 
         p.setContextSingle(new Guard(), 3);
         ArrayList<Deed> deeds = new ArrayList<Deed>();
-        deeds.add(new Deed(r.getAction(2).toAILAction()));
-        deeds.add(new Deed(r.getAction(1).toAILAction()));
-        deeds.add(new Deed(r.getAction(0).toAILAction()));
+        deeds.add(r.getAction(2).toAILAction());
+        deeds.add(r.getAction(1).toAILAction());
+        deeds.add(r.getAction(0).toAILAction());
         p.setBody(deeds);
 
         ArrayList<Deed> prefix = new ArrayList<Deed>();
@@ -706,6 +832,13 @@ public class BluetoothRobot implements Runnable
             if (rule.getEnabled()) {
                 addPlan(rule);
             }
+        }
+    }
+
+    public void setGoal(Goal goal) {
+        if (goal != Goal.NONE) {
+            Intention i = new Intention(new ail.syntax.Goal(goal.toLiteral().getFunctor()), AILAgent.refertoself());
+            reasoningengine.getIntentions().add(i);
         }
     }
 
@@ -790,6 +923,8 @@ public class BluetoothRobot implements Runnable
 	{
 		return stateCopy;
 	}
+
+    public GoalSet getGoals() {return goals;}
 
 	public void setMode(RobotMode _mode)
 	{

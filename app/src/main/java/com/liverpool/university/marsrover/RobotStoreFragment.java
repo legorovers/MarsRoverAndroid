@@ -71,6 +71,10 @@ public class RobotStoreFragment extends Fragment
 		return btRobot.getBeliefSet();
 	}
 
+	public BluetoothRobot.GoalSet getGoals() {return btRobot.getGoals(); }
+
+	public void setGoal(BluetoothRobot.Goal goal) { btRobot.setGoal(goal); }
+
 	public EASSAgent getReasoningEngine() {
 		return btRobot.getReasoningEngine();
 	}

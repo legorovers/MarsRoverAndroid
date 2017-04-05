@@ -33,6 +33,9 @@
         <item>An obstacle</item>
         <item>Water</item>
         <item>A path</item>
+        <item>GOAL obstacle</item>
+        <item>GOAL water</item>
+        <item>GOAL path</item>
     </string-array>
 
     <string-array name="rule_options">
@@ -50,6 +53,9 @@
         <item>Right a bit</item>
         <item>Right 90°</item>
         <item>Arc Right</item>
+        <item>ACHIEVE Obstacle</item>
+        <item>ACHIEVE Path</item>
+        <item>ACHIEVE Water</item>
     </string-array>
 
     <string-array name="rule_type_options">
@@ -62,6 +68,13 @@
         <item>Rule 2</item>
         <item>Rule 3</item>
         <item>Rule 4</item>
+    </string-array>
+
+    <string-array name="goal_list">
+        <item>No Goal</item>
+        <item>Obstacle</item>
+        <item>Path</item>
+        <item>Water</item>
     </string-array>
 
     <string-array name="task_list">

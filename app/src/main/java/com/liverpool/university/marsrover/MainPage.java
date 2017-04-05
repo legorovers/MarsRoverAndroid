@@ -247,6 +247,11 @@ public class MainPage extends AppCompatActivity implements BaseBluetoothFragment
 		return robotStore.getBeliefSet();
 	}
 
+	@Override
+	public BluetoothRobot.GoalSet getGoals() {return robotStore.getGoals(); }
+
+	public void setGoal(BluetoothRobot.Goal goal) { robotStore.setGoal(goal);}
+
 	public EASSAgent getReasoningEngine()
 	{
 		return robotStore.getReasoningEngine();
