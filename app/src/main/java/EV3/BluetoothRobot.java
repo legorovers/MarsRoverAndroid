@@ -12,6 +12,8 @@ import java.util.concurrent.LinkedBlockingDeque;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import lejos.hardware.BrickFinder;
+
 import ail.mas.MAS;
 import ail.syntax.Action;
 import ail.syntax.Literal;
@@ -743,7 +745,16 @@ public class BluetoothRobot implements Runnable
 
 	public BeliefSet getBeliefSet()
 	{
-		return stateCopy;
+		if (stateCopy != null) {
+			return stateCopy;
+		}
+		else
+		{
+			BeliefSet blankBelief = new BeliefSet();
+			blankBelief.colour = 0;
+			blankBelief.distance = 0;
+			return blankBelief;
+		}
 	}
 
 	public void setMode(RobotMode _mode)

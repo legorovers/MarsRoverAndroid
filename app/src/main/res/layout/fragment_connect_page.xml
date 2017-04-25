@@ -1,5 +1,6 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
                 android:orientation="vertical"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -12,108 +13,20 @@
               android:gravity="center">
 
     <TextView
+        android:id="@+id/textView2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Robot Bluetooth Address"
-        android:id="@+id/textView2"
         android:layout_weight="0.00"
         android:padding="10dp"
-        />
+        android:text="Robot Name"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
 
-    <LinearLayout
-        android:orientation="horizontal"
+    <Spinner
+        android:id="@+id/spnRobots"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:weightSum="1"
-        android:gravity="center">
-
-        <EditText
-            android:layout_width="70dp"
-            android:layout_height="fill_parent"
-            android:inputType="number"
-            android:ems="10"
-            android:id="@+id/txtBT1"
-            android:text="101"
-            android:textSize="25dp"
-            android:singleLine="true"
-            android:clickable="true"
-            android:maxLength="3"
-            android:textAlignment="center"
-            android:layout_gravity="center"
-            android:gravity="center"
-            android:nextFocusForward="@+id/txtBT2"
-            android:nextFocusDown="@+id/txtBT2"/>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="."
-            android:id="@+id/textView4"
-            android:layout_weight="0.00"
-            android:textSize="25dp"/>
-
-        <EditText
-            android:layout_width="70dp"
-            android:layout_height="wrap_content"
-            android:inputType="number"
-            android:ems="10"
-            android:id="@+id/txtBT2"
-            android:layout_weight="0.05"
-            android:text="0"
-            android:textSize="25dp"
-            android:gravity="center"
-            android:maxLength="3"
-            android:nextFocusForward="@+id/txtBT3"
-            android:nextFocusDown="@+id/txtBT3"/>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="."
-            android:id="@+id/textView3"
-            android:layout_weight="0.00"
-            android:textSize="25dp"/>
-
-        <EditText
-            android:layout_width="70dp"
-            android:layout_height="fill_parent"
-            android:inputType="number"
-            android:ems="10"
-            android:id="@+id/txtBT3"
-            android:layout_weight="0.05"
-            android:text="1"
-            android:textSize="25dp"
-            android:textAlignment="center"
-            android:gravity="center"
-            android:maxLength="3"
-            android:nextFocusForward="@+id/txtBT4"
-            android:nextFocusDown="@+id/txtBT4"/>
-
-        <TextView
-            android:layout_width="wrap_content"
-
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="."
-            android:id="@+id/textView"
-            android:layout_weight="0.00"
-            android:textSize="25dp"/>
-
-        <EditText
-            android:layout_width="70dp"
-            android:layout_height="wrap_content"
-            android:inputType="number"
-            android:ems="10"
-            android:id="@+id/txtBT4"
-            android:layout_weight="0.05"
-            android:text="1"
-            android:textSize="25dp"
-            android:gravity="center"
-            android:maxLength="3"/>
-    </LinearLayout>
+        android:layout_weight="0.00"
+        android:layout_marginBottom="10dp"/>
 
     <TableLayout
         android:layout_width="wrap_content"

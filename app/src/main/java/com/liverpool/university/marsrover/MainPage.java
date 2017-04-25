@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import eass.semantics.EASSAgent;
 import Adapters.MarsListAdapter;
 import EV3.BluetoothRobot;
+import lejos.hardware.BrickInfo;
 
 /**
  * Main UI Thread, manages the external fragments and allows communication between the fragments
@@ -319,5 +320,15 @@ public class MainPage extends AppCompatActivity implements BaseBluetoothFragment
 
 	public void setChanged(boolean education_set) {
 		robotStore.setChanged(education_set);
+	}
+
+	@Override
+	public BrickInfo getActiveRobot() {
+		return robotStore.getActiveRobot();
+	}
+
+	@Override
+	public void setActiveRobot(BrickInfo active) {
+		robotStore.setActiveRobot(active);
 	}
 }

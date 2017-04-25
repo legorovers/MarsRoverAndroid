@@ -10,6 +10,7 @@ import android.support.v4.app.Fragment;
 import eass.semantics.EASSAgent;
 
 import EV3.BluetoothRobot;
+import lejos.hardware.BrickInfo;
 
 /**
  * Holds the bluetooth event and prevents loss of bluetooth connection during destruction of
@@ -24,6 +25,7 @@ public class RobotStoreFragment extends Fragment
 	public static final String TAG_NAME = "TAG_ROBOT_FRAG";
 	private BluetoothRobot btRobot;
 	private Thread robotThread;
+	private BrickInfo activeRobot;
 
 	public RobotStoreFragment()
 	{
@@ -88,7 +90,7 @@ public class RobotStoreFragment extends Fragment
 
 		if (connection)
 		{
-			btRobot.setBTAddress(String.format("%d.%d.%d.%d", prefs.getInt("BT1", 10), prefs.getInt("BT2", 0), prefs.getInt("BT3", 1), prefs.getInt("BT4", 1)));
+			btRobot.setBTAddress(prefs.getString("Robot_Address", "0.0.0.0"));
 			robotThread = new Thread(btRobot);
 			robotThread.start();
 		}
@@ -146,5 +148,15 @@ public class RobotStoreFragment extends Fragment
 
 	public void setChanged(boolean education_set) {
 		btRobot.setChanged(education_set);
+	}
+
+	public void setActiveRobot(BrickInfo active)
+	{
+		activeRobot = active;
+	}
+
+	public BrickInfo getActiveRobot()
+	{
+		return activeRobot;
 	}
 }

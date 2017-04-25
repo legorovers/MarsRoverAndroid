@@ -6,6 +6,7 @@ import android.support.v4.app.Fragment;
 import eass.semantics.EASSAgent;
 
 import EV3.BluetoothRobot;
+import lejos.hardware.BrickInfo;
 
 /**
  * Base bluetooth fragment which holds the events that can be used to send data to the
@@ -33,6 +34,8 @@ public class BaseBluetoothFragment extends Fragment
 		boolean getRunning();
 		void settingsChanged(float obstacle, int blackMax, int waterMin, int waterMax, int waterRMax, int waterGMax);
 		void setChanged(boolean b);
+		BrickInfo getActiveRobot();
+		void setActiveRobot(BrickInfo active);
 	}
 
 	protected BTEvents btEvents;

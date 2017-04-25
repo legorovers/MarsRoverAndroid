@@ -42,10 +42,8 @@ public class RulesPageFragment extends BaseBluetoothFragment
 				beliefSet.setLength(0);
 				beliefSet.append("Beliefs - [");
 				boolean start = true;
-				for (Literal l: getReasoningEngine().getBB().getAll())
-				{
-					if (!start)
-					{
+				for (Literal l : getReasoningEngine().getBB().getAll()) {
+					if (!start) {
 						beliefSet.append(", ");
 					} else {
 						start = false;
@@ -55,6 +53,7 @@ public class RulesPageFragment extends BaseBluetoothFragment
 				beliefSet.append("]");
 				((TextView) getView().findViewById(R.id.txtBeliefs)).setText(beliefSet.toString());
 			}
+
 			beliefHandle.postDelayed(getBeliefSet, 100);
 		}
 	};

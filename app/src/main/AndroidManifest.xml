@@ -12,6 +12,7 @@
         <activity
             android:name=".MainPage"
             android:label="@string/title_activity_connect_page"
+            android:windowSoftInputMode="stateHidden"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

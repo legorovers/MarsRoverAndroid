@@ -58,10 +58,8 @@ public class NavigationPageFrag extends BaseBluetoothFragment implements Adapter
 				beliefSet.setLength(0);
 				beliefSet.append("Beliefs - [");
 				boolean start = true;
-				for (Literal l: getReasoningEngine().getBB().getAll())
-				{
-					if (!start)
-					{
+				for (Literal l : getReasoningEngine().getBB().getAll()) {
+					if (!start) {
 						beliefSet.append(", ");
 					} else {
 						start = false;
@@ -74,6 +72,7 @@ public class NavigationPageFrag extends BaseBluetoothFragment implements Adapter
 				String formatStr = new SimpleDateFormat("mm:ss", Locale.ENGLISH).format(time);
 				((TextView) getView().findViewById(R.id.txtTimeTil)).setText("Time until next action - " + formatStr);
 			}
+
 			beliefHandle.postDelayed(getBeliefSet, 100);
 		}
 	};
