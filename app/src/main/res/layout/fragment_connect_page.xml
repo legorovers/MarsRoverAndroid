@@ -21,12 +21,20 @@
         android:text="Robot Name"
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
+    <Button
+        android:id="@+id/btnRefresh"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.00"
+        android:enabled="false"
+        android:text="Refresh"/>
+
     <Spinner
         android:id="@+id/spnRobots"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="0.00"
-        android:layout_marginBottom="10dp"/>
+        android:layout_marginBottom="10dp"
+        android:layout_weight="0.00"/>
 
     <TableLayout
         android:layout_width="wrap_content"

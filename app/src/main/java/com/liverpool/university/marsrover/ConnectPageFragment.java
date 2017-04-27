@@ -84,6 +84,14 @@ public class ConnectPageFragment extends BaseBluetoothFragment implements View.O
 	private class getRobots extends AsyncTask<Void, Integer, BrickInfo[]>
 	{
 		@Override
+		protected void onPreExecute() {
+			if (getView() != null) {
+				((Button) getView().findViewById(R.id.btnRefresh)).setEnabled(false);
+				((Spinner) getView().findViewById(R.id.spnRobots)).setAdapter(new ArrayAdapter<String>(getActivity(), R.layout.combo_list_item, R.id.txtView, new String[]{"Finding Robots"}));
+			}
+		}
+
+		@Override
 		protected BrickInfo[] doInBackground(Void... voids) {
 			return BrickFinder.discover();
 		}
@@ -92,7 +100,7 @@ public class ConnectPageFragment extends BaseBluetoothFragment implements View.O
 		protected void onPostExecute(BrickInfo[] brickInfos) {
 			bricks = brickInfos;
 			if (getView() != null) {
-				String[] names = new String[brickInfos.length ];
+				String[] names = new String[brickInfos.length];
 
 				for (int i = 0; i < brickInfos.length; i++) {
 					names[i] = brickInfos[i].getName();
@@ -105,6 +113,7 @@ public class ConnectPageFragment extends BaseBluetoothFragment implements View.O
 					int position = nameAdapter.getPosition(toFind);
 					((Spinner) getView().findViewById(R.id.spnRobots)).setSelection(position);
 				}
+				((Button)getView().findViewById(R.id.btnRefresh)).setEnabled(true);
 			}
 		}
 	}
@@ -157,6 +166,13 @@ public class ConnectPageFragment extends BaseBluetoothFragment implements View.O
 			@Override
 			public void onNothingSelected(AdapterView<?> adapterView) {
 
+			}
+		});
+
+		((Button)view.findViewById(R.id.btnRefresh)).setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View view) {
+				new getRobots().execute();
 			}
 		});
 		return view;
