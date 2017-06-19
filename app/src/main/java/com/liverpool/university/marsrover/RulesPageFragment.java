@@ -104,6 +104,8 @@ public class RulesPageFragment extends BaseBluetoothFragment
 				((CheckBox)getView().findViewById(R.id.chkRule)).isChecked(),
 				BluetoothRobot.robotEvent.fromInt(((Spinner) getView().findViewById(R.id.cboType)).getSelectedItemPosition()),
 				((Spinner) getView().findViewById(R.id.cboObstacle)).getSelectedItemPosition(),
+				BluetoothRobot.RobotGuard.fromInt(((Spinner) getView().findViewById(R.id.cboGuard1)).getSelectedItemPosition()),
+				BluetoothRobot.RobotGuard.fromInt(((Spinner) getView().findViewById(R.id.cboGuard2)).getSelectedItemPosition()),
 				BluetoothRobot.RobotAction.fromInt(((Spinner) getView().findViewById(R.id.cboAction1)).getSelectedItemPosition()),
 				BluetoothRobot.RobotAction.fromInt(((Spinner) getView().findViewById(R.id.cboAction2)).getSelectedItemPosition()),
 				BluetoothRobot.RobotAction.fromInt(((Spinner) getView().findViewById(R.id.cboAction3)).getSelectedItemPosition()));
@@ -136,6 +138,12 @@ public class RulesPageFragment extends BaseBluetoothFragment
 		ArrayAdapter<String> Aadapter = new ArrayAdapter<String>(view.getContext(), R.layout.combo_list_item, R.id.txtView, getResources().getStringArray(R.array.rule_type_options));
 		((Spinner)view.findViewById(R.id.cboObstacle)).setAdapter(Aadapter);
 
+		ArrayAdapter<String> G1adapter = new ArrayAdapter<String>(view.getContext(), R.layout.combo_list_item, R.id.txtView, getResources().getStringArray(R.array.guard_options));
+		((Spinner)view.findViewById(R.id.cboGuard1)).setAdapter(G1adapter);
+		ArrayAdapter<String> G2adapter = new ArrayAdapter<String>(view.getContext(), R.layout.combo_list_item, R.id.txtView, getResources().getStringArray(R.array.guard_options));
+		((Spinner)view.findViewById(R.id.cboGuard2)).setAdapter(G2adapter);
+
+
 		ArrayAdapter<String> A1adapter = new ArrayAdapter<String>(view.getContext(), R.layout.combo_list_item, R.id.txtView, getResources().getStringArray(R.array.rule_options));
 		((Spinner)view.findViewById(R.id.cboAction1)).setAdapter(A1adapter);
 		ArrayAdapter<String> A2adapter = new ArrayAdapter<String>(view.getContext(), R.layout.combo_list_item, R.id.txtView, getResources().getStringArray(R.array.rule_options));
@@ -147,36 +155,32 @@ public class RulesPageFragment extends BaseBluetoothFragment
 		((Spinner)view.findViewById(R.id.cboGoal)).setAdapter(GoalAdapter);
 
 
-		((Spinner)view.findViewById(R.id.cboRule)).setOnItemSelectedListener(new AdapterView.OnItemSelectedListener()
-		{
+		((Spinner)view.findViewById(R.id.cboRule)).setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
 			@Override
-			public void onItemSelected(AdapterView<?> parent, View view, int position, long id)
-			{
+			public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 				BluetoothRobot.RobotRule rule = btEvents.getRule(position);
 
 				((CheckBox) getView().findViewById(R.id.chkRule)).setChecked(rule.getEnabled());
 				((Spinner) getView().findViewById(R.id.cboType)).setSelection(rule.getType().toInt());
 				((Spinner) getView().findViewById(R.id.cboObstacle)).setSelection(rule.getOnAppeared());
+				((Spinner) getView().findViewById(R.id.cboGuard1)).setSelection(rule.getOnAppeared());
+				((Spinner) getView().findViewById(R.id.cboGuard2)).setSelection(rule.getOnAppeared());
 				((Spinner) getView().findViewById(R.id.cboAction1)).setSelection(rule.getAction(0).toInt());
 				((Spinner) getView().findViewById(R.id.cboAction2)).setSelection(rule.getAction(1).toInt());
 				((Spinner) getView().findViewById(R.id.cboAction3)).setSelection(rule.getAction(2).toInt());
 			}
 
 			@Override
-			public void onNothingSelected(AdapterView<?> parent)
-			{
+			public void onNothingSelected(AdapterView<?> parent) {
 
 			}
 		});
 
-		((CheckBox)view.findViewById(R.id.chkRule)).setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener()
-		{
+		((CheckBox)view.findViewById(R.id.chkRule)).setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
 			@Override
-			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked)
-			{
+			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 				String toChange = "Off";
-				if (isChecked)
-				{
+				if (isChecked) {
 					toChange = "On";
 				}
 				buttonView.setText(toChange);
@@ -186,6 +190,8 @@ public class RulesPageFragment extends BaseBluetoothFragment
 
 		((Spinner)view.findViewById(R.id.cboType)).setOnItemSelectedListener(new itemSelected());
 		((Spinner)view.findViewById(R.id.cboObstacle)).setOnItemSelectedListener(new itemSelected());
+		((Spinner)view.findViewById(R.id.cboGuard1)).setOnItemSelectedListener(new itemSelected());
+		((Spinner)view.findViewById(R.id.cboGuard2)).setOnItemSelectedListener(new itemSelected());
 		((Spinner)view.findViewById(R.id.cboAction1)).setOnItemSelectedListener(new itemSelected());
 		((Spinner)view.findViewById(R.id.cboAction2)).setOnItemSelectedListener(new itemSelected());
 		((Spinner)view.findViewById(R.id.cboAction3)).setOnItemSelectedListener(new itemSelected());

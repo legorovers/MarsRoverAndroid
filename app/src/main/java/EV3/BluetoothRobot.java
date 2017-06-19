@@ -46,6 +46,7 @@ import ail.syntax.Plan;
 import ail.syntax.Deed;
 import ail.syntax.Event;
 import ail.syntax.Guard;
+import ail.syntax.GBelief;
 import ail.util.AILexception;
 import eass.semantics.EASSAgent;
 
@@ -247,6 +248,54 @@ public class BluetoothRobot implements Runnable
 
     }
 
+    public enum RobotGuard
+    {
+        NOTHING(0),
+        B_OBSTACLE(1),
+        B_PATH(2),
+        B_WATER(3),
+        G_OBSTACLE(4),
+        G_PATH(5),
+        G_WATER(6);
+
+        static RobotGuard[] gs = RobotGuard.values();
+
+        int value;
+        RobotGuard(int i) {value = i;}
+
+        public int toInt() {return value;}
+
+        public static RobotGuard fromInt(int i)
+        {
+            for (int j = 0; j < gs.length; j++)
+            {
+                if (gs[j].toInt() == i)
+                {
+                    return gs[j];
+                }
+            }
+            return NOTHING;
+        }
+
+        public Guard toAILGuard() {
+            if (value == 0) {
+                return new Guard(new GBelief());
+            } else if (value == 1) {
+                return new Guard(new GBelief(new Literal("obstacle")));
+            } else if (value == 2) {
+                return new Guard(new GBelief(new Literal("path")));
+            } else if (value == 3) {
+                return new Guard(new GBelief(new Literal("water")));
+            } else if (value == 4) {
+                return new Guard(new ail.syntax.Goal("obstacle", ail.syntax.Goal.achieveGoal));
+            } else if (value == 5) {
+                return new Guard(new ail.syntax.Goal("path", ail.syntax.Goal.achieveGoal));
+            } else {
+                return new Guard(new ail.syntax.Goal("water"));
+            }
+        }
+    }
+
     public enum RobotAction
     {
         NOTHING(0), //Index must match with string array rule-options in strings.xml
@@ -341,6 +390,7 @@ public class BluetoothRobot implements Runnable
 		private boolean on;
 		private robotEvent type;
 		private RobotAction[] actions;
+        private RobotGuard[] guards;
 		private int onAppeared;
 
         private Plan agentPlan;
@@ -362,6 +412,14 @@ public class BluetoothRobot implements Runnable
                 }
 
                 int i = 0;
+                for (RobotGuard g: guards) {
+                    if (g != r.getGuard(i)) {
+                        return false;
+                    }
+                    i++;
+                }
+
+                i = 0;
                 for (RobotAction a : actions) {
                     if (a != r.getAction(i)) {
                         return false;
@@ -378,14 +436,16 @@ public class BluetoothRobot implements Runnable
 			on = false;
 			type = robotEvent.BOBSTACLE;
 			onAppeared = 0;
+            guards = new RobotGuard[]{RobotGuard.NOTHING, RobotGuard.NOTHING};
 			actions = new RobotAction[]{RobotAction.NOTHING, RobotAction.NOTHING, RobotAction.NOTHING};
 		}
 		
-		public RobotRule(boolean _on, robotEvent _type, int appeared, RobotAction action1, RobotAction action2, RobotAction action3)
+		public RobotRule(boolean _on, robotEvent _type, int appeared, RobotGuard guard1, RobotGuard guard2, RobotAction action1, RobotAction action2, RobotAction action3)
 		{
 			type = _type;
 			on = _on;
 			onAppeared = appeared;
+            guards = new RobotGuard[]{guard1, guard2};
 			actions = new RobotAction[]{action1, action2, action3};
 		}
 
@@ -398,6 +458,8 @@ public class BluetoothRobot implements Runnable
 		{
 			return onAppeared;
 		}
+
+        public RobotGuard getGuard(int pos) {return guards[pos]; }
 
 		public RobotAction getAction(int pos)
 		{
@@ -789,7 +851,10 @@ public class BluetoothRobot implements Runnable
             p.setTrigger(trigger);
         }
 
-        p.setContextSingle(new Guard(), 3);
+        Guard guard = r.getGuard(0).toAILGuard();
+        guard = new Guard(guard, Guard.GLogicalOp.and, r.getGuard(1).toAILGuard());
+
+        p.setContextSingle(guard, 3);
         ArrayList<Deed> deeds = new ArrayList<Deed>();
         deeds.add(r.getAction(2).toAILAction());
         deeds.add(r.getAction(1).toAILAction());

@@ -38,6 +38,7 @@ import lejos.remote.ev3.RemoteRequestSampleProvider;
  * @author louiseadennis
  *
  */
+public class EASSInfraRedSensor implements EASSSensor
 {
 	PrintStream out;
 	RemoteRequestSampleProvider sensor;

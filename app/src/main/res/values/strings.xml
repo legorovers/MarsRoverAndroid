@@ -28,6 +28,7 @@
     <string name="rule_has">has </string>
     <string name="rule_cont">then do </string>
     <string name="rule_then">then</string>
+    <string name="guard">and</string>
 
     <string-array name="rule_type">
         <item>An obstacle</item>
@@ -56,6 +57,16 @@
         <item>ACHIEVE Obstacle</item>
         <item>ACHIEVE Path</item>
         <item>ACHIEVE Water</item>
+    </string-array>
+
+    <string-array name="guard_options">
+        <item>Nothing</item>
+        <item>Believe Obstacle</item>
+        <item>Believe Path</item>
+        <item>Believe Water</item>
+        <item>Goal Obstacle</item>
+        <item>Goal Path</item>
+        <item>Goal Water</item>
     </string-array>
 
     <string-array name="rule_type_options">
