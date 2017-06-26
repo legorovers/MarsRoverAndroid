@@ -519,6 +519,7 @@ public class BluetoothRobot implements Runnable
         };
 
         state = new BeliefSet();
+        goals = new GoalSet();
         abstraction_engine = new Robot();
         mode = RobotMode.MANUAL;
         running = false;
@@ -572,6 +573,26 @@ public class BluetoothRobot implements Runnable
                 state.colour = Color.rgb((int)(rgb[0] * 850), (int)(rgb[1] * 1026), (int)(rgb[2] * 1815));
                 state.distance = disInput;
                 updateBeliefs(disInput, state.colour);
+
+                java.util.Iterator<ail.syntax.Goal> re_goals =  reasoningengine.getGoals();
+
+                while (re_goals.hasNext()){
+                    ail.syntax.Goal g = re_goals.next();
+                    ail.syntax.Predicate gl = g.getLogicalContent();
+                    if (gl.getFunctor() == "obstacle") {
+                        if (!goals.goals.contains(BeliefStates.OBSTACLE)) {
+                            goals.goals.add(BeliefStates.OBSTACLE);
+                        }
+                    } else if (gl.getFunctor() == "path") {
+                        if (!goals.goals.contains(BeliefStates.PATH)) {
+                            goals.goals.add(BeliefStates.PATH);
+                        }
+                    } else if (gl.getFunctor() == "water") {
+                        if (!goals.goals.contains(BeliefStates.WATER)) {
+                            goals.goals.add(BeliefStates.WATER);
+                        }
+                    }
+                }
 
                 //Create newest copy of beliefs
                 stateCopy = state.clone();
