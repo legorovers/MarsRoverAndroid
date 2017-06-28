@@ -16,6 +16,7 @@ import android.widget.ListView;
 
 import java.util.ArrayList;
 
+import EV3.LegoEASSAgent;
 import eass.semantics.EASSAgent;
 import Adapters.MarsListAdapter;
 import EV3.BluetoothRobot;
@@ -252,7 +253,7 @@ public class MainPage extends AppCompatActivity implements BaseBluetoothFragment
 
 	public void setGoal(BluetoothRobot.Goal goal) { robotStore.setGoal(goal);}
 
-	public EASSAgent getReasoningEngine()
+	public LegoEASSAgent getReasoningEngine()
 	{
 		return robotStore.getReasoningEngine();
 	}

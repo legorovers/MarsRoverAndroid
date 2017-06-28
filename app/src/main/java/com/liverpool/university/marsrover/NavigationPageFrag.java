@@ -75,7 +75,7 @@ public class NavigationPageFrag extends BaseBluetoothFragment implements Adapter
                 // BluetoothRobot.GoalSet currentGoals = btEvents.getGoals();
                 goalSet.setLength(0);
                 goalSet.append("Goals - [");
-                Iterator<Goal> goals = getReasoningEngine().getGoals();
+                Iterator<Goal> goals = getReasoningEngine().getPrintGoals();
                 start = true;
                 while (goals.hasNext()) {
                     if (!start) {

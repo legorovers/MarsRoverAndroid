@@ -61,7 +61,7 @@ public class BluetoothRobot implements Runnable
     // Abstraction and reasoning engines and environment for the reasoning engine.
     // Though this class also performs  some of the functions of the abstraction engine (see updateBeliefs() method).
     private Robot abstraction_engine;
-    private EASSAgent reasoningengine;
+    private LegoEASSAgent reasoningengine;
     EASSEV3Environment env = new EASSEV3Environment();
 
     // Modes and status for managing connection and behaviour
@@ -373,11 +373,11 @@ public class BluetoothRobot implements Runnable
             } else if (value == 13) {
                 return new Deed(new Action("forward_right"));
             } else if (value == 14) {
-                return new Deed(new ail.syntax.Goal("obstacle"));
+                return new Deed(DefaultAILStructure.AILAddition, new ail.syntax.Goal("obstacle"));
             } else if (value == 15) {
-                return new Deed(new ail.syntax.Goal("path"));
+                return new Deed(DefaultAILStructure.AILAddition, new ail.syntax.Goal("path"));
             } else if (value == 16) {
-                return new Deed(new ail.syntax.Goal("water"));
+                return new Deed(DefaultAILStructure.AILAddition, new ail.syntax.Goal("water"));
             } else {
                     return new Deed(new Action("stop"));
             }
@@ -454,6 +454,10 @@ public class BluetoothRobot implements Runnable
 			return on;
 		}
 
+		public void setEnabled(boolean enabled) {
+            on = enabled;
+        }
+
 		public int getOnAppeared()
 		{
 			return onAppeared;
@@ -480,6 +484,11 @@ public class BluetoothRobot implements Runnable
         }
 	}
     private RobotRule[] rules;
+
+    // Three default rule for goals (to prevent looping on unplanned goal in the Reasoning Engine)
+    public RobotRule GObstacle_DoNothing = new RobotRule(true, robotEvent.GOBSTACLE, 0, RobotGuard.NOTHING, RobotGuard.NOTHING, RobotAction.NOTHING, RobotAction.NOTHING, RobotAction.NOTHING);
+    public RobotRule GPath_DoNothing = new RobotRule(true, robotEvent.GPATH, 0, RobotGuard.NOTHING, RobotGuard.NOTHING, RobotAction.NOTHING, RobotAction.NOTHING, RobotAction.NOTHING);
+    public RobotRule GWater_DoNothing = new RobotRule(true, robotEvent.GWATER, 0, RobotGuard.NOTHING, RobotGuard.NOTHING, RobotAction.NOTHING, RobotAction.NOTHING, RobotAction.NOTHING);
 
     private Exception generatedException;
 	private String btAddress;
@@ -515,7 +524,10 @@ public class BluetoothRobot implements Runnable
                 new RobotRule(),
                 new RobotRule(),
                 new RobotRule(),
-                new RobotRule()
+                new RobotRule(),
+                GObstacle_DoNothing,
+                GPath_DoNothing,
+                GWater_DoNothing
         };
 
         state = new BeliefSet();
@@ -528,7 +540,10 @@ public class BluetoothRobot implements Runnable
         MAS mas = new MAS();
         mas.setEnv(env);
         try {
-            reasoningengine = new EASSAgent("robot");
+            reasoningengine = new LegoEASSAgent("robot");
+            addPlan(GObstacle_DoNothing, true);
+            addPlan(GPath_DoNothing, true);
+            addPlan(GWater_DoNothing, true);
         } catch (AILexception aiLexception) {
             aiLexception.printStackTrace();
         }
@@ -557,7 +572,7 @@ public class BluetoothRobot implements Runnable
                 // NB. Actions performed by the reasoning cycle are passed directly
                 // to the abstraction engine by the environment.
                  for (int i = 0; i < 10; i++) {
-                    reasoningengine.reason();
+                    reasoningengine.do_reason();
                 }
 
                 // Get new information from sensors.
@@ -574,7 +589,7 @@ public class BluetoothRobot implements Runnable
                 state.distance = disInput;
                 updateBeliefs(disInput, state.colour);
 
-                java.util.Iterator<ail.syntax.Goal> re_goals =  reasoningengine.getGoals();
+                java.util.Iterator<ail.syntax.Goal> re_goals =  reasoningengine.getPrintGoals();
 
                 while (re_goals.hasNext()){
                     ail.syntax.Goal g = re_goals.next();
@@ -863,6 +878,10 @@ public class BluetoothRobot implements Runnable
 
     // Support for Rules Panel.
     public void addPlan(RobotRule r) {
+        addPlan(r, false);
+    }
+
+    public void addPlan(RobotRule r, boolean isDefault) {
         Plan p = new Plan();
         if (r.getOnAppeared() == 0) {
             p.setTrigger(r.getType().toEvent());
@@ -890,6 +909,25 @@ public class BluetoothRobot implements Runnable
         try {
             reasoningengine.addPlan(p);
             System.err.println(reasoningengine.getPL());
+
+            if (!isDefault) {
+                if (r.getType() == robotEvent.GOBSTACLE) {
+                    if (GObstacle_DoNothing.getEnabled() == true) {
+                        GObstacle_DoNothing.setEnabled(false);
+                        removePlan(GObstacle_DoNothing, true);
+                    }
+                } else if (r.getType() == robotEvent.GPATH) {
+                    if (GPath_DoNothing.getEnabled() == true) {
+                        GPath_DoNothing.setEnabled(false);
+                        removePlan(GPath_DoNothing, true);
+                    }
+                } else {
+                    if (GWater_DoNothing.getEnabled() == true) {
+                        GWater_DoNothing.setEnabled(false);
+                        removePlan(GWater_DoNothing, true);
+                    }
+                }
+            }
         } catch (Exception e) {
 
         }
@@ -899,7 +937,29 @@ public class BluetoothRobot implements Runnable
     }
 
     public void removePlan(RobotRule r) {
+        removePlan(r, false);
+    }
+
+    public void removePlan(RobotRule r, boolean isDefault) {
         reasoningengine.removePlan(r.getPlan());
+        if (!isDefault) {
+            if (r.getType() == robotEvent.GOBSTACLE) {
+                if (GObstacle_DoNothing.getEnabled() == false) {
+                    GObstacle_DoNothing.setEnabled(true);
+                    addPlan(GObstacle_DoNothing, true);
+                }
+            } else if (r.getType() == robotEvent.GPATH) {
+                if (GPath_DoNothing.getEnabled() == false) {
+                    GPath_DoNothing.setEnabled(true);
+                    addPlan(GPath_DoNothing, true);
+                }
+            } else {
+                if (GWater_DoNothing.getEnabled() == false) {
+                    GWater_DoNothing.setEnabled(true);
+                    addPlan(GWater_DoNothing, true);
+                }
+            }
+        }
     }
 
     public RobotRule[] getAllRules()
@@ -925,6 +985,8 @@ public class BluetoothRobot implements Runnable
         if (goal != Goal.NONE) {
             Intention i = new Intention(new ail.syntax.Goal(goal.toLiteral().getFunctor()), AILAgent.refertoself());
             reasoningengine.getIntentions().add(i);
+        } else {
+            reasoningengine.removeAllGoals();
         }
     }
 
@@ -996,7 +1058,7 @@ public class BluetoothRobot implements Runnable
     }
 
     // Set up and general setters and getters.
-    public EASSAgent getReasoningEngine() {
+    public LegoEASSAgent getReasoningEngine() {
         return reasoningengine;
     }
 

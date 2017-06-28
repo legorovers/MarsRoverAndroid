@@ -3,6 +3,7 @@ package com.liverpool.university.marsrover;
 import android.app.Activity;
 import android.support.v4.app.Fragment;
 
+import EV3.LegoEASSAgent;
 import eass.semantics.EASSAgent;
 
 import EV3.BluetoothRobot;
@@ -23,7 +24,7 @@ public class BaseBluetoothFragment extends Fragment
 		BluetoothRobot.GoalSet getGoals();
 		void setGoal(BluetoothRobot.Goal goal);
 		BluetoothRobot.ConnectStatus getConnectionStatus();
-		EASSAgent getReasoningEngine();
+		LegoEASSAgent getReasoningEngine();
 		void setConnection(boolean doConnect);
 		String getConnectionMessages();
 		Exception getConnectionException();
@@ -46,7 +47,7 @@ public class BaseBluetoothFragment extends Fragment
 		btEvents = (BTEvents)activity;
 	}
 
-	public EASSAgent getReasoningEngine() {
+	public LegoEASSAgent getReasoningEngine() {
 		return btEvents.getReasoningEngine();
 	}
 }

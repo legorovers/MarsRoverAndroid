@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 
+import EV3.LegoEASSAgent;
 import eass.semantics.EASSAgent;
 
 import EV3.BluetoothRobot;
@@ -75,7 +76,7 @@ public class RobotStoreFragment extends Fragment
 
 	public void setGoal(BluetoothRobot.Goal goal) { btRobot.setGoal(goal); }
 
-	public EASSAgent getReasoningEngine() {
+	public LegoEASSAgent getReasoningEngine() {
 		return btRobot.getReasoningEngine();
 	}
 

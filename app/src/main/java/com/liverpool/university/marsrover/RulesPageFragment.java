@@ -61,7 +61,7 @@ public class RulesPageFragment extends BaseBluetoothFragment
 				goalSet.setLength(0);
 				goalSet.append("Goals - [");
 				start = true;
-				Iterator<Goal> goals = getReasoningEngine().getGoals();
+				Iterator<Goal> goals = getReasoningEngine().getPrintGoals();
 				while (goals.hasNext()) {
 					if (!start) {
 						goalSet.append(", ");
