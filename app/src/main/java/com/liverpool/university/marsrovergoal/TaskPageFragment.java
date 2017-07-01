@@ -1,4 +1,4 @@
-package com.liverpool.university.marsrover;
+package com.liverpool.university.marsrovergoal;
 
 import android.app.Activity;
 import android.graphics.Color;
@@ -12,6 +12,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TextView;
+
 
 import EV3.BluetoothRobot;
 import ail.syntax.Literal;

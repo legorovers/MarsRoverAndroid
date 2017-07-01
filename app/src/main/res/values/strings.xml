@@ -1,10 +1,10 @@
 <resources>
-    <string name="app_name">Lego Rovers (Home Set)</string>
+    <string name="app_name">Lego Rovers Plus (Home Set)</string>
 
     <string name="drawer_open">Open navigation drawer</string>
     <string name="drawer_close">Close navigation drawer</string>
 
-    <string name="title_activity_connect_page">Lego Rovers (Home Set)</string>
+    <string name="title_activity_connect_page">Lego Rovers Plus (Home Set)</string>
 
     <string-array name="delay_items">
         <item>Instant</item>
@@ -64,9 +64,15 @@
         <item>Believe Obstacle</item>
         <item>Believe Path</item>
         <item>Believe Water</item>
+        <item>Don\'t Believe Obstacle</item>
+        <item>Don\'t Believe Path</item>
+        <item>Don\'t Believe Water</item>
         <item>Goal Obstacle</item>
         <item>Goal Path</item>
         <item>Goal Water</item>
+        <item>Not Goal Obstacle</item>
+        <item>Not Goal Path</item>
+        <item>Not Goal Water</item>
     </string-array>
 
     <string-array name="rule_type_options">

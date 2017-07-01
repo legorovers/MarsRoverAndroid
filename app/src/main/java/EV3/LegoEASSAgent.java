@@ -72,10 +72,10 @@ public class LegoEASSAgent extends EASSAgent {
 
         Intention i = getIntention();
         if (i!= null && !i.empty() && i.hdE().referstoGoal()) {
-            setIntention(null);
+            setIntention(new  Intention());
         } else if (i!= null && !i.empty() && i.hdE().isStart()) {
             if (i.hdD().getContent() instanceof Goal) {
-                setIntention(null);
+                setIntention(new Intention());
             }
         }
 

@@ -1,4 +1,4 @@
-package com.liverpool.university.marsrover;
+package com.liverpool.university.marsrovergoal;
 
 import android.content.res.Configuration;
 import android.graphics.drawable.Drawable;
@@ -17,7 +17,6 @@ import android.widget.ListView;
 import java.util.ArrayList;
 
 import EV3.LegoEASSAgent;
-import eass.semantics.EASSAgent;
 import Adapters.MarsListAdapter;
 import EV3.BluetoothRobot;
 

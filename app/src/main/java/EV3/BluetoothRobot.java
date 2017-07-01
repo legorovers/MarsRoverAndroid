@@ -254,9 +254,15 @@ public class BluetoothRobot implements Runnable
         B_OBSTACLE(1),
         B_PATH(2),
         B_WATER(3),
-        G_OBSTACLE(4),
-        G_PATH(5),
-        G_WATER(6);
+        NB_OBSTACLE(4),
+        NB_PATH(5),
+        NB_WATER(6),
+        G_OBSTACLE(7),
+        G_PATH(8),
+        G_WATER(9),
+        NG_OBSTACLE(10),
+        NG_PATH(11),
+        NG_WATER(12);
 
         static RobotGuard[] gs = RobotGuard.values();
 
@@ -287,11 +293,23 @@ public class BluetoothRobot implements Runnable
             } else if (value == 3) {
                 return new Guard(new GBelief(new Literal("water")));
             } else if (value == 4) {
-                return new Guard(new ail.syntax.Goal("obstacle", ail.syntax.Goal.achieveGoal));
+                return new Guard(Guard.GLogicalOp.not, new GBelief(new Literal("obstacle")));
             } else if (value == 5) {
+                return new Guard(Guard.GLogicalOp.not, new GBelief(new Literal("path")));
+            } else if (value == 6) {
+                return new Guard(Guard.GLogicalOp.not, new GBelief(new Literal("water")));
+            } else if (value == 7) {
+                return new Guard(new ail.syntax.Goal("obstacle", ail.syntax.Goal.achieveGoal));
+            } else if (value == 8) {
                 return new Guard(new ail.syntax.Goal("path", ail.syntax.Goal.achieveGoal));
-            } else {
+            } else if (value == 9){
                 return new Guard(new ail.syntax.Goal("water"));
+            } else if (value == 10) {
+                return new Guard(Guard.GLogicalOp.not, new ail.syntax.Goal("obstacle", ail.syntax.Goal.achieveGoal));
+            } else if (value == 11) {
+                return new Guard(Guard.GLogicalOp.not, new ail.syntax.Goal("path", ail.syntax.Goal.achieveGoal));
+            } else {
+                return new Guard(Guard.GLogicalOp.not, new ail.syntax.Goal("water", ail.syntax.Goal.achieveGoal));
             }
         }
     }
@@ -544,6 +562,10 @@ public class BluetoothRobot implements Runnable
             addPlan(GObstacle_DoNothing, true);
             addPlan(GPath_DoNothing, true);
             addPlan(GWater_DoNothing, true);
+
+            reasoningengine.addPlan(problemPlan("obstacle"));
+            reasoningengine.addPlan(problemPlan("path"));
+            reasoningengine.addPlan(problemPlan("water"));
         } catch (AILexception aiLexception) {
             aiLexception.printStackTrace();
         }
@@ -556,105 +578,119 @@ public class BluetoothRobot implements Runnable
     @Override
     public void run()
     {
-        try
-        {
-            //Connect to robot
-            generatedException = null;
-            status = ConnectStatus.CONNECTING;
+
+        //Connect to robot
+        generatedException = null;
+        status = ConnectStatus.CONNECTING;
+
+        try {
             abstraction_engine.connectToRobot(btAddress);
-            status = ConnectStatus.CONNECTED;
-            float disInput;
-            int curSpeed = speed;
-            //While connected or no signal to disconnect
-            while (status == ConnectStatus.CONNECTED)
-            {
-                // Perform 10 reasoning cycles in the reasoning engine.
-                // NB. Actions performed by the reasoning cycle are passed directly
-                // to the abstraction engine by the environment.
-                 for (int i = 0; i < 10; i++) {
+        } catch (Exception e) {
+            OnException(e);
+        }
+
+        status = ConnectStatus.CONNECTED;
+        float disInput;
+        int curSpeed = speed;
+        //While connected or no signal to disconnect
+        while (status == ConnectStatus.CONNECTED)
+        {
+            // Perform 10 reasoning cycles in the reasoning engine.
+            // NB. Actions performed by the reasoning cycle are passed directly
+            // to the abstraction engine by the environment.
+            for (int i = 0; i < 10; i++) {
+                try {
                     reasoningengine.do_reason();
+                } catch (Exception e) {
+                    Log.i("errMessage", e.toString());
                 }
+            }
 
-                // Get new information from sensors.
-                if (abstraction_engine.isHome_edition()) {
-                    disInput = abstraction_engine.getirSensor().getSample();
-                    disInput = disInput/100;
-                } else {
-                    disInput = abstraction_engine.getusSensor().getSample();
-                }
-                float[] rgb = abstraction_engine.getRGBSensor().getRGBSample();
+            // Get new information from sensors.
+            if (abstraction_engine.isHome_edition()) {
+                disInput = abstraction_engine.getirSensor().getSample();
+                disInput = disInput/100;
+            } else {
+                disInput = abstraction_engine.getusSensor().getSample();
+            }
+            float[] rgb = abstraction_engine.getRGBSensor().getRGBSample();
 
-                // Update Beliefs
-                state.colour = Color.rgb((int)(rgb[0] * 850), (int)(rgb[1] * 1026), (int)(rgb[2] * 1815));
-                state.distance = disInput;
-                updateBeliefs(disInput, state.colour);
+            // Update Beliefs
+            state.colour = Color.rgb((int)(rgb[0] * 850), (int)(rgb[1] * 1026), (int)(rgb[2] * 1815));
+            state.distance = disInput;
+            updateBeliefs(disInput, state.colour);
 
-                java.util.Iterator<ail.syntax.Goal> re_goals =  reasoningengine.getPrintGoals();
+            java.util.Iterator<ail.syntax.Goal> re_goals =  reasoningengine.getPrintGoals();
 
-                while (re_goals.hasNext()){
-                    ail.syntax.Goal g = re_goals.next();
-                    ail.syntax.Predicate gl = g.getLogicalContent();
-                    if (gl.getFunctor() == "obstacle") {
-                        if (!goals.goals.contains(BeliefStates.OBSTACLE)) {
-                            goals.goals.add(BeliefStates.OBSTACLE);
-                        }
-                    } else if (gl.getFunctor() == "path") {
-                        if (!goals.goals.contains(BeliefStates.PATH)) {
-                            goals.goals.add(BeliefStates.PATH);
-                        }
-                    } else if (gl.getFunctor() == "water") {
-                        if (!goals.goals.contains(BeliefStates.WATER)) {
-                            goals.goals.add(BeliefStates.WATER);
-                        }
+            while (re_goals.hasNext()){
+                ail.syntax.Goal g = re_goals.next();
+                ail.syntax.Predicate gl = g.getLogicalContent();
+                if (gl.getFunctor() == "obstacle") {
+                    if (!goals.goals.contains(BeliefStates.OBSTACLE)) {
+                        goals.goals.add(BeliefStates.OBSTACLE);
+                    }
+                } else if (gl.getFunctor() == "path") {
+                    if (!goals.goals.contains(BeliefStates.PATH)) {
+                        goals.goals.add(BeliefStates.PATH);
+                    }
+                } else if (gl.getFunctor() == "water") {
+                    if (!goals.goals.contains(BeliefStates.WATER)) {
+                        goals.goals.add(BeliefStates.WATER);
                     }
                 }
-
-                //Create newest copy of beliefs
-                stateCopy = state.clone();
-
-                // Update robot speed if necessary
-                if (curSpeed != speed)
-                {
-                    abstraction_engine.setTravelSpeed(speed);
-                    curSpeed = speed;
-                }
-
-                // Do something.
-                switch(mode)
-                {
-                    case MANUAL:
-                        doAction();
-                        break;
-                    case LINE:
-                        doLine();
-                        break;
-                    case AVOID:
-                        doAvoid();
-                        break;
-                    case WATER:
-                        doWater();
-                        break;
-                }
             }
 
-            //Clear beliefs before disconnect
-            state.states.clear();
-            state.colour = 0;
-            state.distance = 0;
+            try {
+                Log.i("AgentInfo", reasoningengine.toString());
+            } catch (Exception e) {
+                Log.i("errorMsg", e.toString());
 
-            disconnect();
+            }
 
-        }
-        catch (Exception e)
-        {
-            status = ConnectStatus.DISCONNECTING;
-            if (abstraction_engine != null && abstraction_engine.isConnected())
+            //Create newest copy of beliefs
+            stateCopy = state.clone();
+
+            // Update robot speed if necessary
+            if (curSpeed != speed)
             {
-                abstraction_engine.close();
+                abstraction_engine.setTravelSpeed(speed);
+                curSpeed = speed;
             }
-            status = ConnectStatus.DISCONNECTED;
-            generatedException = e;
+
+            // Do something.
+            switch(mode) {
+                case MANUAL:
+                    doAction();
+                    break;
+                case LINE:
+                    doLine();
+                    break;
+                case AVOID:
+                    doAvoid();
+                    break;
+                case WATER:
+                    doWater();
+                    break;
+            }
         }
+
+        //Clear beliefs before disconnect
+        state.states.clear();
+        state.colour = 0;
+        state.distance = 0;
+
+        disconnect();
+
+    }
+
+    private void OnException(Exception e) {
+        status = ConnectStatus.DISCONNECTING;
+        if (abstraction_engine != null && abstraction_engine.isConnected())
+        {
+            abstraction_engine.close();
+        }
+        status = ConnectStatus.DISCONNECTED;
+        generatedException = e;
     }
 
     // Update both the belief set here (used for displaying information to the user) and
@@ -881,6 +917,28 @@ public class BluetoothRobot implements Runnable
         addPlan(r, false);
     }
 
+    public ail.syntax.Plan problemPlan(String s) {
+        Plan p = new Plan();
+        Event trigger = new Event(DefaultAILStructure.AILDeletion, new ail.syntax.Goal(s));
+        trigger.setTrigType(Event.AILDeletion);
+        p.setTrigger(trigger);
+
+
+        Guard guard = new Guard();
+
+        p.setContextSingle(guard, 3);
+        ArrayList<Deed> deeds = new ArrayList<Deed>();
+        deeds.add(RobotAction.NOTHING.toAILAction());
+        p.setBody(deeds);
+
+        ArrayList<Deed> prefix = new ArrayList<Deed>();
+        prefix.add(new Deed(Deed.Dnpy));
+
+        p.setPrefix(prefix);
+
+        return p;
+    }
+
     public void addPlan(RobotRule r, boolean isDefault) {
         Plan p = new Plan();
         if (r.getOnAppeared() == 0) {
@@ -915,21 +973,27 @@ public class BluetoothRobot implements Runnable
                     if (GObstacle_DoNothing.getEnabled() == true) {
                         GObstacle_DoNothing.setEnabled(false);
                         removePlan(GObstacle_DoNothing, true);
+                        GObstacle_DoNothing.setEnabled(true);
+                        addPlan(GObstacle_DoNothing, true);
                     }
                 } else if (r.getType() == robotEvent.GPATH) {
                     if (GPath_DoNothing.getEnabled() == true) {
                         GPath_DoNothing.setEnabled(false);
                         removePlan(GPath_DoNothing, true);
+                        GPath_DoNothing.setEnabled(true);
+                        addPlan(GPath_DoNothing, true);
                     }
-                } else {
+                } else if (r.getType() == robotEvent.GWATER){
                     if (GWater_DoNothing.getEnabled() == true) {
                         GWater_DoNothing.setEnabled(false);
                         removePlan(GWater_DoNothing, true);
+                        GWater_DoNothing.setEnabled(true);
+                        addPlan(GWater_DoNothing, true);
                     }
                 }
             }
         } catch (Exception e) {
-
+            Log.i("errorMsg", e.toString());
         }
 
         r.setPlan(p);
@@ -942,7 +1006,7 @@ public class BluetoothRobot implements Runnable
 
     public void removePlan(RobotRule r, boolean isDefault) {
         reasoningengine.removePlan(r.getPlan());
-        if (!isDefault) {
+       /* if (!isDefault) {
             if (r.getType() == robotEvent.GOBSTACLE) {
                 if (GObstacle_DoNothing.getEnabled() == false) {
                     GObstacle_DoNothing.setEnabled(true);
@@ -953,13 +1017,13 @@ public class BluetoothRobot implements Runnable
                     GPath_DoNothing.setEnabled(true);
                     addPlan(GPath_DoNothing, true);
                 }
-            } else {
+            } else if (r.getType() == robotEvent.GWATER){
                 if (GWater_DoNothing.getEnabled() == false) {
                     GWater_DoNothing.setEnabled(true);
                     addPlan(GWater_DoNothing, true);
                 }
             }
-        }
+        } */
     }
 
     public RobotRule[] getAllRules()
