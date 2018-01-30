@@ -1,34 +1,26 @@
-package com.liverpool.university.marsrover;
+package com.liverpool.university.marsrovergoal;
 
-import android.app.Activity;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v4.app.Fragment;
-import android.support.v4.util.TimeUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
-import android.widget.LinearLayout;
-import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+
 import java.text.SimpleDateFormat;
 import java.util.Locale;
-import java.util.concurrent.TimeUnit;
-import java.util.List;
 import java.util.Iterator;
 
 
 import ail.syntax.Literal;
 import ail.syntax.Goal;
-import eass.semantics.EASSAgent;
 
 import EV3.BluetoothRobot;
 

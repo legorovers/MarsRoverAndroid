@@ -1,11 +1,10 @@
-package com.liverpool.university.marsrover;
+package com.liverpool.university.marsrovergoal;
 
 
 import android.app.Activity;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,9 +12,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
-import android.widget.ImageView;
 import android.widget.Spinner;
-import android.widget.Switch;
 import android.widget.TextView;
 
 import java.util.Iterator;
@@ -163,8 +160,8 @@ public class RulesPageFragment extends BaseBluetoothFragment
 				((CheckBox) getView().findViewById(R.id.chkRule)).setChecked(rule.getEnabled());
 				((Spinner) getView().findViewById(R.id.cboType)).setSelection(rule.getType().toInt());
 				((Spinner) getView().findViewById(R.id.cboObstacle)).setSelection(rule.getOnAppeared());
-				((Spinner) getView().findViewById(R.id.cboGuard1)).setSelection(rule.getOnAppeared());
-				((Spinner) getView().findViewById(R.id.cboGuard2)).setSelection(rule.getOnAppeared());
+				((Spinner) getView().findViewById(R.id.cboGuard1)).setSelection(rule.getGuard(0).toInt());
+				((Spinner) getView().findViewById(R.id.cboGuard2)).setSelection(rule.getGuard(1).toInt());
 				((Spinner) getView().findViewById(R.id.cboAction1)).setSelection(rule.getAction(0).toInt());
 				((Spinner) getView().findViewById(R.id.cboAction2)).setSelection(rule.getAction(1).toInt());
 				((Spinner) getView().findViewById(R.id.cboAction3)).setSelection(rule.getAction(2).toInt());

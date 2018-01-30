@@ -1,4 +1,4 @@
-package com.liverpool.university.marsrover;
+package com.liverpool.university.marsrovergoal;
 
 
 import android.app.Activity;

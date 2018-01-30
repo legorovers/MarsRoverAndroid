@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.liverpool.university.marsrover"
+    package="com.liverpool.university.marsrovergoal"
     android:versionCode="6"
     android:versionName="1.6">
 
@@ -10,7 +10,7 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".MainPage"
+            android:name="com.liverpool.university.marsrovergoal.MainPage"
             android:label="@string/title_activity_connect_page"
             android:screenOrientation="portrait">
             <intent-filter>
